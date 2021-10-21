@@ -1,0 +1,15 @@
+#include <QtWidgets>
+#include <QtMultimedia/QMediaPlayer>
+#include <QtMultimedia/QVideoProbe>
+#include <QtMultimedia/QAbstractVideoSurface>
+#include <QtMultimedia/QVideoSurfaceFormat>
+#include <QtMultimediaWidgets/QVideoWidget>
+#include <QtMultimediaWidgets/QGraphicsVideoItem>
+#include <QUrl>
+#include <QTimer>
+#include <QTabWidget>
+#include <QPointF>
+#include <QGraphicsScene>
+#include "qdebug.h"
+#include <k4a/k4a.hpp>
+#include <vector>

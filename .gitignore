@@ -1,0 +1,9 @@
+# Visual Studio project configuration files
+*.vcxproj*
+
+# Video files
+*.mkv
+*.wmv
+*.mp4
+
+/x64

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DesktopAppClass</class>
+ <widget class="QWidget" name="DesktopAppClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1048</width>
+    <height>806</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DesktopApp</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>10</y>
+     <width>885</width>
+     <height>761</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>2</number>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>View</string>
+    </attribute>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>70</y>
+       <width>741</width>
+       <height>601</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QGraphicsView" name="graphicsViewVideo"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QGraphicsView" name="graphicsViewVideo2"/>
+        </item>
+        <item>
+         <widget class="QGraphicsView" name="graphicsViewVideo3"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Capture</string>
+    </attribute>
+    <widget class="QGraphicsView" name="graphicsViewVideo4">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>70</y>
+       <width>739</width>
+       <height>297</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="captureButton">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>650</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>capture</string>
+     </property>
+    </widget>
+    <widget class="QGraphicsView" name="graphicsViewImage">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>400</y>
+       <width>321</width>
+       <height>231</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="saveButton">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>650</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>save</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>690</y>
+       <width>323</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QRadioButton" name="radioButton">
+        <property name="text">
+         <string>Color Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButton2">
+        <property name="text">
+         <string>Depth Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButton3">
+        <property name="text">
+         <string>IR Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioButton4">
+        <property name="text">
+         <string>Alignment</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QPushButton" name="annotateButtonCaptureTab">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>650</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>annotate</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Annotate</string>
+    </attribute>
+    <widget class="QGraphicsView" name="graphicsViewAnnotation">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>60</y>
+       <width>561</width>
+       <height>421</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="annotateButtonAnnotateTab">
+     <property name="geometry">
+      <rect>
+       <x>390</x>
+       <y>540</y>
+       <width>121</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Fetch annotations</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="annotationsText">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>580</y>
+       <width>411</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="desktopapp.qrc"/>
+ </resources>
+ <connections/>
+</ui>
