@@ -92,7 +92,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QPushButton" name="saveButton">
+    <widget class="QPushButton" name="saveButtonCaptureTab">
      <property name="geometry">
       <rect>
        <x>410</x>
@@ -166,17 +166,17 @@
     <widget class="QGraphicsView" name="graphicsViewAnnotation">
      <property name="geometry">
       <rect>
-       <x>160</x>
-       <y>60</y>
-       <width>561</width>
-       <height>421</height>
+       <x>50</x>
+       <y>40</y>
+       <width>771</width>
+       <height>441</height>
       </rect>
      </property>
     </widget>
     <widget class="QPushButton" name="annotateButtonAnnotateTab">
      <property name="geometry">
       <rect>
-       <x>390</x>
+       <x>290</x>
        <y>540</y>
        <width>121</width>
        <height>23</height>
@@ -200,6 +200,19 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="saveButtonAnnotateTab">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>540</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Save</string>
      </property>
     </widget>
    </widget>

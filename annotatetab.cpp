@@ -6,9 +6,8 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 
 	this->image = this->parent->getQCurrentImage().copy();
 
-	// rescale image
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
-	this->image = this->image.scaled(width, height, Qt::KeepAspectRatio);
+	this->annotatedImage = this->image.copy().scaled(width, height, Qt::KeepAspectRatio);
 
 	DragAndDropGraphicsScene* scene = new DragAndDropGraphicsScene(this);
 
@@ -16,7 +15,7 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 	this->parent->ui.graphicsViewAnnotation->show();
 
 	QObject::connect(this->parent->ui.annotateButtonAnnotateTab, &QPushButton::clicked, [this]() {
-		int width = this->image.width(), height = this->image.height();
+		int width = this->annotatedImage.width(), height = this->annotatedImage.height();
 
 		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
 			int randX = rand() % (width + 1);
@@ -28,6 +27,16 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 		this->drawAnnotations();
 		this->setAnnotationsText();
 	});
+
+	QObject::connect(this->parent->ui.saveButtonAnnotateTab, &QPushButton::clicked, [this]() {
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), QString(), tr("Images (*.png)"));
+        int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
+
+        if (!fileName.isEmpty())
+        {
+            this->annotatedImage.save(fileName);
+        }
+	});
 }
 
 void AnnotateTab::reloadCurrentImage() {
@@ -36,9 +45,8 @@ void AnnotateTab::reloadCurrentImage() {
 
 	this->image = this->parent->getQCurrentImage().copy();
 
-	// rescale image
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
-	this->image = this->image.scaled(width, height, Qt::KeepAspectRatio);
+	this->annotatedImage = this->image.copy().scaled(width, height, Qt::KeepAspectRatio);
 
 	DragAndDropGraphicsScene* scene = new DragAndDropGraphicsScene(this);
 
@@ -53,8 +61,17 @@ void AnnotateTab::drawAnnotations() {
     this->parent->ui.graphicsViewAnnotation->show();
 }
 
+
+DesktopApp* AnnotateTab::getParent() {
+	return this->parent;
+}
+
 QImage* AnnotateTab::getImage() {
 	return &this->image;
+}
+
+QImage* AnnotateTab::getAnnotatedImage() {
+	return &this->annotatedImage;
 }
 
 QPointF* AnnotateTab::getAnnotations() {
@@ -118,4 +135,9 @@ void AnnotateTab::setAnnotationsText() {
 	}
 
 	this->parent->ui.annotationsText->setText(text);
+}
+
+void AnnotateTab::recopyAnnotatedImage() {
+	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
+	this->annotatedImage = this->image.copy().scaled(width, height, Qt::KeepAspectRatio);
 }

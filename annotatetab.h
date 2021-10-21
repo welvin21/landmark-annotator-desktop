@@ -16,13 +16,17 @@ public:
     AnnotateTab(DesktopApp* parent);
 
     void reloadCurrentImage();
+    DesktopApp* getParent();
     QImage* getImage();
+    QImage* getAnnotatedImage();
     QPointF* getAnnotations();
     std::vector<QPointF> getConvexHull();
     void setAnnotationsText();
+    void recopyAnnotatedImage();
 
 private:
     QImage image;
+    QImage annotatedImage;
     QPointF annotations[NUM_ANNOTATIONS];
     DesktopApp* parent;
     void drawAnnotations();

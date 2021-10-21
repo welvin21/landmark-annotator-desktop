@@ -6,7 +6,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
 
     this->setDefaultCaptureMode();
 
-    QObject::connect(this->parent->ui.saveButton, &QPushButton::clicked, [this]() {
+    QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), QString(), tr("Images (*.png)"));
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
         QImage image = this->parent->getQCurrentImage().scaled(width, height, Qt::KeepAspectRatio);

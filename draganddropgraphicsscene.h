@@ -16,7 +16,6 @@ public:
 	void dragMoveEvent(QGraphicsSceneDragDropEvent* event) override;
 
 private:
-	QImage annotatedImage;
 	AnnotateTab* annotateTab;
 	bool isPoint;
 	int pointIndex;

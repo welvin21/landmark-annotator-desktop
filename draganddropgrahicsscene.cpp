@@ -3,10 +3,9 @@
 
 DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab) {
 	this->annotateTab = annotateTab;
-	this->annotatedImage = this->annotateTab->getImage()->copy();
 
 	// Draw annotations if any
-	QPainter painter(&this->annotatedImage);
+	QPainter painter(this->annotateTab->getAnnotatedImage());
 	painter.setPen(QPen(Qt::red, 5, Qt::SolidLine, Qt::RoundCap));
 
 	for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
@@ -27,7 +26,7 @@ DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab) {
 
 	painter.end();
 
-	this->addPixmap(QPixmap::fromImage(this->annotatedImage));
+	this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedImage()));
 	this->annotateTab->setAnnotationsText();
 }
 
@@ -60,13 +59,13 @@ void DragAndDropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event) 
 
 void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 	if (this->isPoint) {
-		this->annotatedImage = this->annotateTab->getImage()->copy();
+		this->annotateTab->recopyAnnotatedImage();
 
 		float x = event->scenePos().x(), y = event->scenePos().y();
 		this->annotateTab->getAnnotations()[this->pointIndex].setX(x);
 		this->annotateTab->getAnnotations()[this->pointIndex].setY(y);
 
-		QPainter painter(&annotatedImage);
+		QPainter painter(this->annotateTab->getAnnotatedImage());
 		painter.setPen(QPen(Qt::red, 5, Qt::SolidLine, Qt::RoundCap));
 		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
 			painter.drawPoint(this->annotateTab->getAnnotations()[i].x(), this->annotateTab->getAnnotations()[i].y());
@@ -83,8 +82,11 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 
 		painter.end();
 
-		QPixmap item = QPixmap::fromImage(this->annotatedImage);
-		this->addPixmap(item);
+		// Create a copy of rescaled annotated image to be displayed
+		int width = this->annotateTab->getParent()->ui.graphicsViewAnnotation->width(), height = this->annotateTab->getParent()->ui.graphicsViewAnnotation->height();
+		QImage annotatedImageRescaled = this->annotateTab->getAnnotatedImage()->scaled(width, height, Qt::KeepAspectRatio);
+
+		this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedImage()));
 		this->annotateTab->setAnnotationsText();
 	}
 	
