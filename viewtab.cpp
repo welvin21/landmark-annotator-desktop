@@ -20,6 +20,12 @@ ViewTab::ViewTab(DesktopApp* parent)
 
                     int width = this->parent->ui.graphicsViewVideo->width(), height = this->parent->ui.graphicsViewVideo->height();
                     QImage qColorImage = (this->parent->getQColorImage()).scaled(width, height, Qt::KeepAspectRatio);
+
+                    // Deallocate heap memory used by previous GGraphicsScene object
+                    if (this->parent->ui.graphicsViewVideo->scene()) {
+                        delete this->parent->ui.graphicsViewVideo->scene();
+                    }
+                    
                     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(qColorImage));
                     QGraphicsScene* scene = new QGraphicsScene;
                     scene->addItem(item);
@@ -37,6 +43,12 @@ ViewTab::ViewTab(DesktopApp* parent)
 
                     int width = this->parent->ui.graphicsViewVideo2->width(), height = this->parent->ui.graphicsViewVideo2->height();
                     QImage qDepthImage = (this->parent->getQDepthImage()).scaled(width, height, Qt::KeepAspectRatio);
+
+                    // Deallocate heap memory used by previous GGraphicsScene object
+                    if (this->parent->ui.graphicsViewVideo->scene()) {
+                        delete this->parent->ui.graphicsViewVideo2->scene();
+                    }
+
                     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(qDepthImage));
                     QGraphicsScene* scene = new QGraphicsScene;
                     scene->addItem(item);
@@ -54,6 +66,12 @@ ViewTab::ViewTab(DesktopApp* parent)
 
                     int width = this->parent->ui.graphicsViewVideo3->width(), height = this->parent->ui.graphicsViewVideo3->height();
                     QImage qIRImage = (this->parent->getQIRImage()).scaled(width, height, Qt::KeepAspectRatio);
+
+                    // Deallocate heap memory used by previous GGraphicsScene object
+                    if (this->parent->ui.graphicsViewVideo->scene()) {
+                        delete this->parent->ui.graphicsViewVideo3->scene();
+                    }
+
                     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(qIRImage));
                     QGraphicsScene* scene = new QGraphicsScene;
                     scene->addItem(item);
