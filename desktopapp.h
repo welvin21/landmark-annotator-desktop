@@ -1,9 +1,12 @@
 #ifndef DESKTOPAPP_H
 #define DESKTOPAPP_H
 
+#define MAX_IMAGE_QUEUE_SIZE 10
+
 #include <QtWidgets/QWidget>
 #include "ui_desktopapp.h"
 #include <k4a/k4a.hpp>
+#include <queue>
 
 // Forward declaration to break circular dependency
 // Since DesktopApp have member variables of type <View | Capture | Annotate>Tab
@@ -29,9 +32,9 @@ public:
     CaptureTab* captureTab;
     AnnotateTab* annotateTab;
 
-    k4a_image_t currentColorImage;
-    k4a_image_t currentDepthImage;
-    k4a_image_t currentIRImage;
+    std::queue<k4a_image_t> colorImageQueue;
+    std::queue<k4a_image_t> depthImageQueue;
+    std::queue<k4a_image_t> irImageQueue;
     QImage currentImage;
 
     void setTextOnGraphicsViews(char* text);

@@ -13,3 +13,4 @@
 #include "qdebug.h"
 #include <k4a/k4a.hpp>
 #include <vector>
+#include <queue>
