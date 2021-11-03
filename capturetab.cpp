@@ -6,6 +6,11 @@ CaptureTab::CaptureTab(DesktopApp* parent)
 
     this->setDefaultCaptureMode();
 
+    this->registerRadioButtonOnClicked(this->parent->ui.radioButton, &this->colorImage);
+    this->registerRadioButtonOnClicked(this->parent->ui.radioButton2, &this->depthImage);
+    this->registerRadioButtonOnClicked(this->parent->ui.radioButton3, &this->colorToDepthImage);
+    this->registerRadioButtonOnClicked(this->parent->ui.radioButton4, &this->depthToColorImage);
+
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), QString(), tr("Images (*.png)"));
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
@@ -18,19 +23,24 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     });
 
     QObject::connect(this->parent->ui.captureButton, &QPushButton::clicked, [this]() {
+        this->colorImage = this->parent->getQColorImage();
+        this->depthImage = this->parent->getQDepthImage();
+        this->colorToDepthImage = this->parent->getQColorToDepthImage();
+        this->depthToColorImage = this->parent->getQDepthToColorImage();
+
         QImage image;
 
         if (this->parent->ui.radioButton->isChecked()) {
-            image = this->parent->getQColorImage();
+            image = this->colorImage;
         }
         else if (this->parent->ui.radioButton2->isChecked()) {
-            image = this->parent->getQDepthImage();
+            image = this->depthImage;
         }
         else if (this->parent->ui.radioButton3->isChecked()) {
-            image = this->parent->getQColorToDepthImage();
+            image = this->colorToDepthImage;
         }
         else {
-            image = this->parent->getQDepthToColorImage();
+            image = this->depthToColorImage;
         }
 
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
@@ -134,4 +144,25 @@ void CaptureTab::setDefaultCaptureMode() {
     parent->ui.radioButton2->setChecked(false);
     parent->ui.radioButton3->setChecked(false);
     parent->ui.radioButton4->setChecked(false);
+}
+
+void CaptureTab::registerRadioButtonOnClicked(QRadioButton* radioButton, QImage* image) {
+    QObject::connect(radioButton, &QRadioButton::clicked, [this, image]() {
+        int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
+        this->parent->currentImage = (*image).copy();
+
+        QImage imageScaled = (*image).scaled(width, height, Qt::KeepAspectRatio);
+
+        // Deallocate heap memory used by previous GGraphicsScene object
+        if (this->parent->ui.graphicsViewImage->scene()) {
+            delete this->parent->ui.graphicsViewImage->scene();
+        }
+
+        QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(imageScaled));
+        QGraphicsScene* scene = new QGraphicsScene;
+        scene->addItem(item);
+
+        this->parent->ui.graphicsViewImage->setScene(scene);
+        this->parent->ui.graphicsViewImage->show();
+    });
 }
