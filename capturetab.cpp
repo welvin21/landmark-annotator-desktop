@@ -27,10 +27,10 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             image = this->parent->getQDepthImage();
         }
         else if (this->parent->ui.radioButton3->isChecked()) {
-            image = this->parent->getQIRImage();
+            image = this->parent->getQColorToDepthImage();
         }
         else {
-            image = this->parent->getQAlignmentImage();
+            image = this->parent->getQDepthToColorImage();
         }
 
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();

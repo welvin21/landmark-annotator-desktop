@@ -41,7 +41,8 @@ public:
     QImage getQColorImage();
     QImage getQDepthImage();
     QImage getQIRImage();
-    QImage getQAlignmentImage();
+    QImage getQDepthToColorImage();
+    QImage getQColorToDepthImage();
     QImage getQCurrentImage();
 };
 

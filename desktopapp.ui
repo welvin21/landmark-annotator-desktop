@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -118,28 +118,28 @@
       <item>
        <widget class="QRadioButton" name="radioButton">
         <property name="text">
-         <string>Color Mode</string>
+         <string>Color</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton2">
         <property name="text">
-         <string>Depth Mode</string>
+         <string>Depth</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton3">
         <property name="text">
-         <string>IR Mode</string>
+         <string>Color to Depth</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton4">
         <property name="text">
-         <string>Alignment</string>
+         <string>Depth to Color</string>
         </property>
        </widget>
       </item>

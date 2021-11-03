@@ -135,7 +135,7 @@ QImage DesktopApp::getQIRImage() {
     return qImage;
 }
 
-QImage DesktopApp::getQAlignmentImage() {
+QImage DesktopApp::getQDepthToColorImage() {
     k4a_image_t k4aDepthImage = this->depthImageQueue.back(), k4aColorImage = this->colorImageQueue.back();
 
     QImage qEmptyImage;
@@ -183,6 +183,83 @@ QImage DesktopApp::getQAlignmentImage() {
         return qImage;
     }
 
+    return qEmptyImage;
+}
+
+QImage DesktopApp::getQColorToDepthImage() {
+    QImage qEmptyImage;
+
+    // We create a new capture here instead of retrieving color and depth images from the queue
+    // Because we want the color and depth image to represent the same point in time (same capture)
+    // Obtaining the last item of the depth and color queue doesn't guarantee that
+    // See the full documentation here
+    // https://microsoft.github.io/Azure-Kinect-Sensor-SDK/master/group___functions_gaf3a941f07bb0185cd7a72699a648fc29.html#gaf3a941f07bb0185cd7a72699a648fc29
+
+    k4a_capture_t newCapture;
+    if (k4a_device_get_capture(this->device, &newCapture, K4A_WAIT_INFINITE) != K4A_RESULT_SUCCEEDED) {
+        k4a_capture_release(newCapture);
+        return qEmptyImage;
+    }
+
+    if (!newCapture) {
+        k4a_capture_release(newCapture);
+        return qEmptyImage;
+    }
+
+    k4a_image_t k4aColorImage = k4a_capture_get_color_image(newCapture);
+    k4a_image_t k4aDepthImage = k4a_capture_get_depth_image(newCapture);
+
+    if (k4aDepthImage != NULL) {
+        k4a_calibration_t calibration;
+        if (k4a_device_get_calibration(this->device, this->deviceConfig.depth_mode, this->deviceConfig.color_resolution, &calibration) != K4A_RESULT_SUCCEEDED) {
+            return qEmptyImage;
+        }
+
+        k4a_transformation_t transformationHandle = k4a_transformation_create(&calibration);
+        k4a_image_t alignmentImage;
+
+        if (k4a_image_create(K4A_IMAGE_FORMAT_COLOR_BGRA32,
+            k4a_image_get_width_pixels(k4aDepthImage),
+            k4a_image_get_height_pixels(k4aDepthImage),
+            k4a_image_get_width_pixels(k4aDepthImage) * 4 * (int)sizeof(uint8_t),
+            &alignmentImage) != K4A_RESULT_SUCCEEDED) {
+                k4a_capture_release(newCapture);
+                k4a_image_release(k4aColorImage);
+                k4a_image_release(k4aDepthImage);
+                k4a_transformation_destroy(transformationHandle);
+                k4a_image_release(alignmentImage);
+            return qEmptyImage;
+        }
+
+        if (k4a_transformation_color_image_to_depth_camera(transformationHandle, k4aDepthImage, k4aColorImage, alignmentImage) != K4A_WAIT_RESULT_SUCCEEDED) {
+            k4a_capture_release(newCapture);
+            k4a_image_release(k4aColorImage);
+            k4a_image_release(k4aDepthImage);
+            k4a_transformation_destroy(transformationHandle);
+            k4a_image_release(alignmentImage);
+            return qEmptyImage;
+        }
+
+        double min, max;
+        cv::Mat matAlignmentImageRaw = cv::Mat(k4a_image_get_height_pixels(alignmentImage), k4a_image_get_width_pixels(alignmentImage), CV_8UC4, k4a_image_get_buffer(alignmentImage), cv::Mat::AUTO_STEP);
+
+        cv::Mat temp;
+        cv::cvtColor(matAlignmentImageRaw, temp, cv::COLOR_BGR2RGB);
+        
+        QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
+        qImage.bits();
+
+        k4a_capture_release(newCapture);
+        k4a_image_release(k4aColorImage);
+        k4a_image_release(k4aDepthImage);
+        k4a_transformation_destroy(transformationHandle);
+        k4a_image_release(alignmentImage);
+        return qImage;
+    }
+
+    k4a_capture_release(newCapture);
+    k4a_image_release(k4aColorImage);
+    k4a_image_release(k4aDepthImage);
     return qEmptyImage;
 }
 
