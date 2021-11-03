@@ -112,20 +112,24 @@ CaptureTab::CaptureTab(DesktopApp* parent)
                 if (k4aDepthImage != NULL) {
                     this->parent->depthImageQueue.push(k4aDepthImage);
 
+                    int width = this->parent->ui.graphicsViewVideo5->width(), height = this->parent->ui.graphicsViewVideo5->height();
+                    QImage qDepthImage = (this->parent->getQDepthImage()).scaled(width, height, Qt::KeepAspectRatio);
+
+                    // Deallocate heap memory used by previous GGraphicsScene object
+                    if (this->parent->ui.graphicsViewVideo->scene()) {
+                        delete this->parent->ui.graphicsViewVideo5->scene();
+                    }
+
+                    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(qDepthImage));
+                    QGraphicsScene* scene = new QGraphicsScene;
+                    scene->addItem(item);
+
+                    this->parent->ui.graphicsViewVideo5->setScene(scene);
+                    this->parent->ui.graphicsViewVideo5->show();
+
                     while (this->parent->depthImageQueue.size() > MAX_IMAGE_QUEUE_SIZE) {
                         k4a_image_release(this->parent->depthImageQueue.front());
                         this->parent->depthImageQueue.pop();
-                    }
-                }
-
-                k4a_image_t k4aIRImage = k4a_capture_get_ir_image(this->parent->capture);
-
-                if (k4aIRImage != NULL) {
-                    this->parent->irImageQueue.push(k4aIRImage);
-
-                    while (this->parent->irImageQueue.size() > MAX_IMAGE_QUEUE_SIZE) {
-                        k4a_image_release(this->parent->irImageQueue.front());
-                        this->parent->irImageQueue.pop();
                     }
                 }
 
