@@ -64,6 +64,8 @@ void AnnotateTab::drawAnnotations() {
     if (this->scene) {
 		delete this->scene;
     }
+	
+	this->recopyAnnotatedImage();
 
 	this->scene = new DragAndDropGraphicsScene(this);
 	
