@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -64,8 +64,8 @@
       <rect>
        <x>70</x>
        <y>70</y>
-       <width>739</width>
-       <height>297</height>
+       <width>731</width>
+       <height>291</height>
       </rect>
      </property>
     </widget>
@@ -85,10 +85,10 @@
     <widget class="QGraphicsView" name="graphicsViewImage">
      <property name="geometry">
       <rect>
-       <x>280</x>
-       <y>400</y>
+       <x>480</x>
+       <y>380</y>
        <width>321</width>
-       <height>231</height>
+       <height>251</height>
       </rect>
      </property>
     </widget>
@@ -118,28 +118,28 @@
       <item>
        <widget class="QRadioButton" name="radioButton">
         <property name="text">
-         <string>Color Mode</string>
+         <string>Color</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton2">
         <property name="text">
-         <string>Depth Mode</string>
+         <string>Depth</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton3">
         <property name="text">
-         <string>IR Mode</string>
+         <string>Color to Depth</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QRadioButton" name="radioButton4">
         <property name="text">
-         <string>Alignment</string>
+         <string>Depth to Color</string>
         </property>
        </widget>
       </item>
@@ -156,6 +156,16 @@
      </property>
      <property name="text">
       <string>annotate</string>
+     </property>
+    </widget>
+    <widget class="QGraphicsView" name="graphicsViewVideo5">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>380</y>
+       <width>401</width>
+       <height>251</height>
+      </rect>
      </property>
     </widget>
    </widget>

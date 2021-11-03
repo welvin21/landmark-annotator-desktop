@@ -18,7 +18,12 @@ public:
 
 private:
     DesktopApp* parent;
+    QImage colorImage;
+    QImage depthImage;
+    QImage colorToDepthImage;
+    QImage depthToColorImage;
     void setDefaultCaptureMode();
+    void registerRadioButtonOnClicked(QRadioButton* radioButton, QImage* image);
 };
 
 #endif
