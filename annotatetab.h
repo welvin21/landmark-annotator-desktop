@@ -7,6 +7,7 @@
 #include "desktopapp.h"
 #include <k4a/k4a.hpp>
 #include <opencv2/opencv.hpp>
+#include "draganddropgraphicsscene.h"
 
 class AnnotateTab : public QWidget
 {
@@ -29,6 +30,7 @@ private:
     QImage annotatedImage;
     QPointF annotations[NUM_ANNOTATIONS];
     DesktopApp* parent;
+    DragAndDropGraphicsScene* scene;
     void drawAnnotations();
 };
 

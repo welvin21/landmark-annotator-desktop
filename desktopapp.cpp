@@ -153,9 +153,15 @@ QImage DesktopApp::getQAlignmentImage() {
             k4a_image_get_width_pixels(k4aColorImage),
             k4a_image_get_height_pixels(k4aColorImage),
             k4a_image_get_width_pixels(k4aColorImage) * (int)sizeof(uint16_t),
-            &alignmentImage) != K4A_RESULT_SUCCEEDED) return qEmptyImage;
+            &alignmentImage) != K4A_RESULT_SUCCEEDED) {
+            k4a_transformation_destroy(transformationHandle);
+            k4a_image_release(alignmentImage);
+            return qEmptyImage;
+        }
 
         if (k4a_transformation_depth_image_to_color_camera(transformationHandle, k4aDepthImage, alignmentImage) != K4A_WAIT_RESULT_SUCCEEDED) {
+            k4a_transformation_destroy(transformationHandle);
+            k4a_image_release(alignmentImage);
             return qEmptyImage;
         }
 
@@ -172,6 +178,8 @@ QImage DesktopApp::getQAlignmentImage() {
         QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
         qImage.bits();
 
+        k4a_transformation_destroy(transformationHandle);
+        k4a_image_release(alignmentImage);
         return qImage;
     }
 

@@ -9,9 +9,9 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
 	this->annotatedImage = this->image.copy().scaled(width, height, Qt::KeepAspectRatio);
 
-	DragAndDropGraphicsScene* scene = new DragAndDropGraphicsScene(this);
+	this->scene = new DragAndDropGraphicsScene(this);
 
-	this->parent->ui.graphicsViewAnnotation->setScene(scene);
+	this->parent->ui.graphicsViewAnnotation->setScene(this->scene);
 	this->parent->ui.graphicsViewAnnotation->show();
 
 	QObject::connect(this->parent->ui.annotateButtonAnnotateTab, &QPushButton::clicked, [this]() {
@@ -48,16 +48,26 @@ void AnnotateTab::reloadCurrentImage() {
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
 	this->annotatedImage = this->image.copy().scaled(width, height, Qt::KeepAspectRatio);
 
-	DragAndDropGraphicsScene* scene = new DragAndDropGraphicsScene(this);
+	// Deallocate heap memory used by previous GGraphicsScene object
+    if (this->scene) {
+		delete this->scene;
+    }
 
-	this->parent->ui.graphicsViewAnnotation->setScene(scene);
+	this->scene = new DragAndDropGraphicsScene(this);
+
+	this->parent->ui.graphicsViewAnnotation->setScene(this->scene);
 	this->parent->ui.graphicsViewAnnotation->show();
 }
 
 void AnnotateTab::drawAnnotations() {
-	DragAndDropGraphicsScene* scene = new DragAndDropGraphicsScene(this);
+	// Deallocate heap memory used by previous GGraphicsScene object
+    if (this->scene) {
+		delete this->scene;
+    }
 
-	this->parent->ui.graphicsViewAnnotation->setScene(scene);
+	this->scene = new DragAndDropGraphicsScene(this);
+	
+	this->parent->ui.graphicsViewAnnotation->setScene(this->scene);
     this->parent->ui.graphicsViewAnnotation->show();
 }
 
