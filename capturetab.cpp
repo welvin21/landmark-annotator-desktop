@@ -38,6 +38,11 @@ CaptureTab::CaptureTab(DesktopApp* parent)
 
         QImage imageScaled = image.scaled(width, height, Qt::KeepAspectRatio);
 
+        // Deallocate heap memory used by previous GGraphicsScene object
+        if (this->parent->ui.graphicsViewImage->scene()) {
+            delete this->parent->ui.graphicsViewImage->scene();
+        }
+
         QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(imageScaled));
         QGraphicsScene* scene = new QGraphicsScene;
         scene->addItem(item);
@@ -69,25 +74,50 @@ CaptureTab::CaptureTab(DesktopApp* parent)
                 k4a_image_t k4aColorImage = k4a_capture_get_color_image(this->parent->capture);
 
                 if (k4aColorImage != NULL) {
-                    this->parent->currentColorImage = k4aColorImage;
+                    this->parent->colorImageQueue.push(k4aColorImage);
 
                     int width = this->parent->ui.graphicsViewVideo->width(), height = this->parent->ui.graphicsViewVideo->height();
                     QImage qColorImage = (this->parent->getQColorImage()).scaled(width, height, Qt::KeepAspectRatio);
+
+                    // Deallocate heap memory used by previous GGraphicsScene object
+                    if (this->parent->ui.graphicsViewVideo4->scene()) {
+                        delete this->parent->ui.graphicsViewVideo4->scene();
+                    }
+                    
                     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(qColorImage));
                     QGraphicsScene* scene = new QGraphicsScene;
                     scene->addItem(item);
 
                     this->parent->ui.graphicsViewVideo4->setScene(scene);
                     this->parent->ui.graphicsViewVideo4->show();
+
+                    while (this->parent->colorImageQueue.size() > MAX_IMAGE_QUEUE_SIZE) {
+                        k4a_image_release(this->parent->colorImageQueue.front());
+                        this->parent->colorImageQueue.pop();
+                    }
                 }
 
                 k4a_image_t k4aDepthImage = k4a_capture_get_depth_image(this->parent->capture);
 
-                if (k4aDepthImage != NULL) this->parent->currentDepthImage = k4aDepthImage;
+                if (k4aDepthImage != NULL) {
+                    this->parent->depthImageQueue.push(k4aDepthImage);
+
+                    while (this->parent->depthImageQueue.size() > MAX_IMAGE_QUEUE_SIZE) {
+                        k4a_image_release(this->parent->depthImageQueue.front());
+                        this->parent->depthImageQueue.pop();
+                    }
+                }
 
                 k4a_image_t k4aIRImage = k4a_capture_get_ir_image(this->parent->capture);
 
-                if (k4aIRImage != NULL) this->parent->currentIRImage = k4aIRImage;
+                if (k4aIRImage != NULL) {
+                    this->parent->irImageQueue.push(k4aIRImage);
+
+                    while (this->parent->irImageQueue.size() > MAX_IMAGE_QUEUE_SIZE) {
+                        k4a_image_release(this->parent->irImageQueue.front());
+                        this->parent->irImageQueue.pop();
+                    }
+                }
 
                 k4a_capture_release(this->parent->capture);
             }

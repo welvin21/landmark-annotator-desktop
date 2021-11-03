@@ -82,7 +82,7 @@ void DesktopApp::setTextOnGraphicsViews(char* text) {
 }
 
 QImage DesktopApp::getQColorImage() {
-    k4a_image_t k4aColorImage = this->currentColorImage;
+    k4a_image_t k4aColorImage = this->colorImageQueue.back();
 
     cv::Mat matColorImage = cv::Mat(k4a_image_get_height_pixels(k4aColorImage), k4a_image_get_width_pixels(k4aColorImage), CV_8UC4, k4a_image_get_buffer(k4aColorImage));
             
@@ -97,7 +97,7 @@ QImage DesktopApp::getQColorImage() {
 }
 
 QImage DesktopApp::getQDepthImage() {
-    k4a_image_t k4aDepthImage = this->currentDepthImage;
+    k4a_image_t k4aDepthImage = this->depthImageQueue.back();
 
     double min, max;
     cv::Mat matDepthImageRaw = cv::Mat(k4a_image_get_height_pixels(k4aDepthImage), k4a_image_get_width_pixels(k4aDepthImage), CV_16U, k4a_image_get_buffer(k4aDepthImage), cv::Mat::AUTO_STEP);
@@ -113,10 +113,11 @@ QImage DesktopApp::getQDepthImage() {
     qImage.bits();
 
     return qImage;
+
 }
 
 QImage DesktopApp::getQIRImage() {
-    k4a_image_t k4aIRImage = this->currentIRImage;
+    k4a_image_t k4aIRImage = this->irImageQueue.back();
 
     double min, max;
     cv::Mat matIRImageRaw = cv::Mat(k4a_image_get_height_pixels(k4aIRImage), k4a_image_get_width_pixels(k4aIRImage), CV_16U, k4a_image_get_buffer(k4aIRImage), cv::Mat::AUTO_STEP);
@@ -135,7 +136,7 @@ QImage DesktopApp::getQIRImage() {
 }
 
 QImage DesktopApp::getQAlignmentImage() {
-    k4a_image_t k4aDepthImage = this->currentDepthImage, k4aColorImage = this->currentColorImage;
+    k4a_image_t k4aDepthImage = this->depthImageQueue.back(), k4aColorImage = this->colorImageQueue.back();
 
     QImage qEmptyImage;
 
@@ -152,9 +153,15 @@ QImage DesktopApp::getQAlignmentImage() {
             k4a_image_get_width_pixels(k4aColorImage),
             k4a_image_get_height_pixels(k4aColorImage),
             k4a_image_get_width_pixels(k4aColorImage) * (int)sizeof(uint16_t),
-            &alignmentImage) != K4A_RESULT_SUCCEEDED) return qEmptyImage;
+            &alignmentImage) != K4A_RESULT_SUCCEEDED) {
+            k4a_transformation_destroy(transformationHandle);
+            k4a_image_release(alignmentImage);
+            return qEmptyImage;
+        }
 
         if (k4a_transformation_depth_image_to_color_camera(transformationHandle, k4aDepthImage, alignmentImage) != K4A_WAIT_RESULT_SUCCEEDED) {
+            k4a_transformation_destroy(transformationHandle);
+            k4a_image_release(alignmentImage);
             return qEmptyImage;
         }
 
@@ -171,6 +178,8 @@ QImage DesktopApp::getQAlignmentImage() {
         QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
         qImage.bits();
 
+        k4a_transformation_destroy(transformationHandle);
+        k4a_image_release(alignmentImage);
         return qImage;
     }
 
