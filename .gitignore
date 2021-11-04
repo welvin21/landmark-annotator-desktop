@@ -1,6 +1,3 @@
-# Visual Studio project configuration files
-*.vcxproj*
-
 # Video files
 *.mkv
 *.wmv
