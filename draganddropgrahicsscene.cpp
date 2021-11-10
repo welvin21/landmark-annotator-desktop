@@ -6,7 +6,7 @@ DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab) {
 
 	// Draw annotations if any
 	QPainter painter(this->annotateTab->getAnnotatedImage());
-	painter.setPen(QPen(Qt::red, 5, Qt::SolidLine, Qt::RoundCap));
+	painter.setPen(QPen(Qt::red, 10, Qt::SolidLine, Qt::RoundCap));
 
 	for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
 		if (!this->annotateTab->getAnnotations()[i].isNull()) {
@@ -66,7 +66,7 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 		this->annotateTab->getAnnotations()[this->pointIndex].setY(y);
 
 		QPainter painter(this->annotateTab->getAnnotatedImage());
-		painter.setPen(QPen(Qt::red, 5, Qt::SolidLine, Qt::RoundCap));
+		painter.setPen(QPen(Qt::red, 10, Qt::SolidLine, Qt::RoundCap));
 		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
 			painter.drawPoint(this->annotateTab->getAnnotations()[i].x(), this->annotateTab->getAnnotations()[i].y());
 		}

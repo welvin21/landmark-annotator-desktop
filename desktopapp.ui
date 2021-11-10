@@ -186,7 +186,7 @@
     <widget class="QPushButton" name="annotateButtonAnnotateTab">
      <property name="geometry">
       <rect>
-       <x>450</x>
+       <x>390</x>
        <y>540</y>
        <width>121</width>
        <height>23</height>
@@ -199,7 +199,7 @@
     <widget class="QLabel" name="annotationsText">
      <property name="geometry">
       <rect>
-       <x>240</x>
+       <x>400</x>
        <y>580</y>
        <width>411</width>
        <height>121</height>
@@ -215,7 +215,7 @@
     <widget class="QPushButton" name="saveButtonAnnotateTab">
      <property name="geometry">
       <rect>
-       <x>640</x>
+       <x>580</x>
        <y>540</y>
        <width>75</width>
        <height>23</height>
@@ -228,7 +228,7 @@
     <widget class="QPushButton" name="reportButton">
      <property name="geometry">
       <rect>
-       <x>770</x>
+       <x>710</x>
        <y>540</y>
        <width>121</width>
        <height>23</height>

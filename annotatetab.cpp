@@ -148,7 +148,7 @@ void AnnotateTab::setAnnotationsText() {
 	if (this->annotations[0].isNull()) text.append("No annotations");
 	else {
 		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
-			float x = this->annotations[i].x(), y = this->annotations[i].y();
+			int x = this->annotations[i].x(), y = this->annotations[i].y();
 			std::string plain_s = "Point " + std::to_string(i) + ": (" + std::to_string(x) + ", " + std::to_string(y) + ")\n";
 			QString str = QString::fromUtf8(plain_s.c_str());
 			text.append(str);
