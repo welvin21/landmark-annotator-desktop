@@ -32,9 +32,18 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), QString(), tr("Images (*.png)"));
         int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
 
-        if (!fileName.isEmpty())
-        {
+        if (!fileName.isEmpty()) {
             this->annotatedImage.save(fileName);
+			
+			QString jsonFileName = QFileDialog::getSaveFileName(this, tr("Save coordinates json file"), QString(), tr("JSON (*.json)"));
+			if (!jsonFileName.isEmpty()) {
+				QFile jsonFile(jsonFileName);
+				jsonFile.open(QFile::WriteOnly);
+
+				QJsonDocument document = this->getAnnotationsJson();
+
+				jsonFile.write(document.toJson());
+			}
         }
 	});
 }
@@ -152,4 +161,25 @@ void AnnotateTab::setAnnotationsText() {
 void AnnotateTab::recopyAnnotatedImage() {
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
 	this->annotatedImage = this->image.copy().scaled(width, height, Qt::KeepAspectRatio);
+}
+
+QJsonDocument AnnotateTab::getAnnotationsJson() {
+	QJsonObject emptyJsonObject{};
+	QJsonDocument document;
+
+	if (!this->annotations[0].isNull()) {
+		QJsonObject coordinates;
+
+		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
+			QJsonObject coordinate;
+			coordinate.insert("x", this->annotations[i].x());
+			coordinate.insert("y", this->annotations[i].y());
+			coordinates.insert(QString::number(i), coordinate);
+		}
+
+		emptyJsonObject.insert("coordinates", coordinates);
+	}
+
+	document.setObject(emptyJsonObject);
+	return document;
 }

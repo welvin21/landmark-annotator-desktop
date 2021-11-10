@@ -32,6 +32,7 @@ private:
     DesktopApp* parent;
     DragAndDropGraphicsScene* scene;
     void drawAnnotations();
+    QJsonDocument getAnnotationsJson();
 };
 
 // Helper function for calculating convex hull given a set of points
