@@ -263,7 +263,3 @@ QImage DesktopApp::getQColorToDepthImage() {
     k4a_image_release(k4aDepthImage);
     return qEmptyImage;
 }
-
-QImage DesktopApp::getQCurrentImage() {
-    return this->currentImage;
-}

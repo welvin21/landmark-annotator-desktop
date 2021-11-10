@@ -15,6 +15,8 @@ class CaptureTab: public QWidget
 public:
     CaptureTab(DesktopApp* parent);
     QTimer* timer;
+    QImage getQCapturedColorImage();
+    QImage getQCapturedDepthToColorImage();
 
 private:
     DesktopApp* parent;

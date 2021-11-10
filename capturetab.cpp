@@ -14,7 +14,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), QString(), tr("Images (*.png)"));
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        QImage image = this->parent->getQCurrentImage().scaled(width, height, Qt::KeepAspectRatio);
+        QImage image = this->parent->currentCapturedImage.scaled(width, height, Qt::KeepAspectRatio);
 
         if (!fileName.isEmpty())
         {
@@ -44,7 +44,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         }
 
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        this->parent->currentImage = image.copy();
+        this->parent->currentCapturedImage = image.copy();
 
         QImage imageScaled = image.scaled(width, height, Qt::KeepAspectRatio);
 
@@ -65,6 +65,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         // Move to annotate tab whose index is 2
         this->parent->annotateTab->reloadCurrentImage();
         this->parent->ui.tabWidget->setCurrentIndex(2);
+        this->parent->ui.annotateButtonAnnotateTab->click();
     });
 
     this->timer = new QTimer;
@@ -153,7 +154,7 @@ void CaptureTab::setDefaultCaptureMode() {
 void CaptureTab::registerRadioButtonOnClicked(QRadioButton* radioButton, QImage* image) {
     QObject::connect(radioButton, &QRadioButton::clicked, [this, image]() {
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        this->parent->currentImage = (*image).copy();
+        this->parent->currentCapturedImage = (*image).copy();
 
         QImage imageScaled = (*image).scaled(width, height, Qt::KeepAspectRatio);
 
@@ -169,4 +170,12 @@ void CaptureTab::registerRadioButtonOnClicked(QRadioButton* radioButton, QImage*
         this->parent->ui.graphicsViewImage->setScene(scene);
         this->parent->ui.graphicsViewImage->show();
     });
+}
+
+QImage CaptureTab::getQCapturedColorImage() {
+    return this->colorImage;
+}
+
+QImage CaptureTab::getQCapturedDepthToColorImage() {
+    return this->depthToColorImage;
 }

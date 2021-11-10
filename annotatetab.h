@@ -8,6 +8,7 @@
 #include <k4a/k4a.hpp>
 #include <opencv2/opencv.hpp>
 #include "draganddropgraphicsscene.h"
+#include "capturetab.h"
 
 enum ImageType {Color, DepthToColor};
 

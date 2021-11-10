@@ -35,7 +35,7 @@ public:
     std::queue<k4a_image_t> colorImageQueue;
     std::queue<k4a_image_t> depthImageQueue;
     std::queue<k4a_image_t> irImageQueue;
-    QImage currentImage;
+    QImage currentCapturedImage;
 
     void setTextOnGraphicsViews(char* text);
     QImage getQColorImage();
@@ -43,7 +43,6 @@ public:
     QImage getQIRImage();
     QImage getQDepthToColorImage();
     QImage getQColorToDepthImage();
-    QImage getQCurrentImage();
 };
 
 #endif

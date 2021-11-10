@@ -4,8 +4,8 @@
 AnnotateTab::AnnotateTab(DesktopApp* parent) {
 	this->parent = parent;
 
-	this->colorImage = this->parent->getQCurrentImage().copy();
-	this->depthToColorImage = this->parent->getQCurrentImage().copy();
+	this->colorImage = this->parent->captureTab->getQCapturedColorImage().copy();
+	this->depthToColorImage = this->parent->captureTab->getQCapturedDepthToColorImage().copy();
 
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
 	this->annotatedColorImage = this->colorImage.copy().scaled(width, height, Qt::KeepAspectRatio);
@@ -60,8 +60,8 @@ void AnnotateTab::reloadCurrentImage() {
 	// Remove existing annotations in annotations member variable
 	for (int i = 0; i < NUM_ANNOTATIONS; ++i) this->annotations[i] = QPoint();
 
-	this->colorImage = this->parent->getQCurrentImage().copy();
-	this->depthToColorImage = this->parent->getQCurrentImage().copy();
+	this->colorImage = this->parent->captureTab->getQCapturedColorImage().copy();
+	this->depthToColorImage = this->parent->captureTab->getQCapturedDepthToColorImage().copy();
 
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
 	this->annotatedColorImage = this->colorImage.copy().scaled(width, height, Qt::KeepAspectRatio);
