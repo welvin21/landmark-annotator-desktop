@@ -9,6 +9,8 @@
 #include <opencv2/opencv.hpp>
 #include "draganddropgraphicsscene.h"
 
+enum ImageType {Color, DepthToColor};
+
 class AnnotateTab : public QWidget
 {
     Q_OBJECT
@@ -19,18 +21,24 @@ public:
     void reloadCurrentImage();
     DesktopApp* getParent();
     QImage* getImage();
-    QImage* getAnnotatedImage();
+    QImage* getAnnotatedColorImage();
+    QImage* getAnnotatedDepthToColorImage();
     QPointF* getAnnotations();
     std::vector<QPointF> getConvexHull();
     void setAnnotationsText();
     void recopyAnnotatedImage();
+    DragAndDropGraphicsScene* getColorScene();
+    DragAndDropGraphicsScene* getDepthToColorScene();
 
 private:
-    QImage image;
-    QImage annotatedImage;
+    QImage colorImage;
+    QImage annotatedColorImage;
+    QImage depthToColorImage;
+    QImage annotatedDepthToColorImage;
     QPointF annotations[NUM_ANNOTATIONS];
     DesktopApp* parent;
-    DragAndDropGraphicsScene* scene;
+    DragAndDropGraphicsScene* colorScene;
+    DragAndDropGraphicsScene* depthToColorScene;
     void drawAnnotations();
     QJsonDocument getAnnotationsJson();
 };

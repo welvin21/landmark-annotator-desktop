@@ -1,12 +1,14 @@
 #include "draganddropgraphicsscene.h";
 #include "annotatetab.h";
 
-DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab) {
+DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab, ImageType imageType) {
 	this->annotateTab = annotateTab;
+	this->imageType = imageType;
 
 	// Draw annotations if any
-	QPainter painter(this->annotateTab->getAnnotatedImage());
-	painter.setPen(QPen(Qt::red, 10, Qt::SolidLine, Qt::RoundCap));
+	QPainter painter(this->imageType == Color ? this->annotateTab->getAnnotatedColorImage() : this->annotateTab->getAnnotatedDepthToColorImage());
+
+	painter.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
 
 	for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
 		if (!this->annotateTab->getAnnotations()[i].isNull()) {
@@ -14,19 +16,9 @@ DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab) {
 		}
 	}
 
-	// Draw lines between convex hull if any
-	std::vector<QPointF> convexHullPoints = this->annotateTab->getConvexHull();
-	painter.setPen(QPen(Qt::white, 1, Qt::DashDotLine, Qt::RoundCap));
-
-	int j;
-	for (int i = 0; i < convexHullPoints.size() - 1; ++i) {
-		j = i + 1;
-		painter.drawLine(convexHullPoints[i].x(), convexHullPoints[i].y(), convexHullPoints[j].x(), convexHullPoints[j].y());
-	}
-
 	painter.end();
 
-	this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedImage()));
+	this->addPixmap(QPixmap::fromImage(this->imageType == Color ? *this->annotateTab->getAnnotatedColorImage() : *this->annotateTab->getAnnotatedDepthToColorImage()));
 	this->annotateTab->setAnnotationsText();
 }
 
@@ -65,28 +57,31 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 		this->annotateTab->getAnnotations()[this->pointIndex].setX(x);
 		this->annotateTab->getAnnotations()[this->pointIndex].setY(y);
 
-		QPainter painter(this->annotateTab->getAnnotatedImage());
-		painter.setPen(QPen(Qt::red, 10, Qt::SolidLine, Qt::RoundCap));
+		QPainter painter(this->annotateTab->getAnnotatedColorImage());
+		painter.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
 		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
 			painter.drawPoint(this->annotateTab->getAnnotations()[i].x(), this->annotateTab->getAnnotations()[i].y());
 		}
 
-		std::vector<QPointF> convexHullPoints = this->annotateTab->getConvexHull();
-		painter.setPen(QPen(Qt::white, 1, Qt::DashDotLine, Qt::RoundCap));
+		painter.end();
 
-		int j;
-		for (int i = 0; i < convexHullPoints.size() - 1; ++i) {
-			j = i + 1;
-			painter.drawLine(convexHullPoints[i].x(), convexHullPoints[i].y(), convexHullPoints[j].x(), convexHullPoints[j].y());
+		QPainter painter2(this->annotateTab->getAnnotatedDepthToColorImage());
+		painter2.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
+		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
+			painter2.drawPoint(this->annotateTab->getAnnotations()[i].x(), this->annotateTab->getAnnotations()[i].y());
 		}
 
-		painter.end();
+		painter2.end();
 
 		// Create a copy of rescaled annotated image to be displayed
 		int width = this->annotateTab->getParent()->ui.graphicsViewAnnotation->width(), height = this->annotateTab->getParent()->ui.graphicsViewAnnotation->height();
-		QImage annotatedImageRescaled = this->annotateTab->getAnnotatedImage()->scaled(width, height, Qt::KeepAspectRatio);
+		QImage annotatedColorImageRescaled = this->annotateTab->getAnnotatedColorImage()->scaled(width, height, Qt::KeepAspectRatio);
 
-		this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedImage()));
+		width = this->annotateTab->getParent()->ui.graphicsViewAnnotation2->width();  height = this->annotateTab->getParent()->ui.graphicsViewAnnotation2->height();
+		QImage annotatedDepthToColorImageRescaled = this->annotateTab->getAnnotatedDepthToColorImage()->scaled(width, height, Qt::KeepAspectRatio);
+		
+		this->annotateTab->getColorScene()->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedColorImage()));
+		this->annotateTab->getDepthToColorScene()->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedDepthToColorImage()));
 		this->annotateTab->setAnnotationsText();
 	}
 	

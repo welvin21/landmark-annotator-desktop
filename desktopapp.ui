@@ -176,33 +176,20 @@
     <widget class="QGraphicsView" name="graphicsViewAnnotation">
      <property name="geometry">
       <rect>
-       <x>210</x>
-       <y>40</y>
-       <width>771</width>
-       <height>441</height>
+       <x>120</x>
+       <y>30</y>
+       <width>401</width>
+       <height>331</height>
       </rect>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="annotateButtonAnnotateTab">
-     <property name="geometry">
-      <rect>
-       <x>390</x>
-       <y>540</y>
-       <width>121</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Fetch annotations</string>
      </property>
     </widget>
     <widget class="QLabel" name="annotationsText">
      <property name="geometry">
       <rect>
-       <x>400</x>
-       <y>580</y>
-       <width>411</width>
-       <height>121</height>
+       <x>730</x>
+       <y>470</y>
+       <width>271</width>
+       <height>171</height>
       </rect>
      </property>
      <property name="text">
@@ -212,30 +199,57 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QPushButton" name="saveButtonAnnotateTab">
+    <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>580</x>
-       <y>540</y>
-       <width>75</width>
-       <height>23</height>
+       <x>700</x>
+       <y>410</y>
+       <width>321</width>
+       <height>31</height>
       </rect>
      </property>
-     <property name="text">
-      <string>Save</string>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QPushButton" name="saveButtonAnnotateTab">
+        <property name="text">
+         <string>Save</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="annotateButtonAnnotateTab">
+        <property name="text">
+         <string>Fetch annotations</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="reportButton">
+        <property name="text">
+         <string>Generate report</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QGraphicsView" name="graphicsViewAnnotation2">
+     <property name="geometry">
+      <rect>
+       <x>650</x>
+       <y>30</y>
+       <width>401</width>
+       <height>331</height>
+      </rect>
      </property>
     </widget>
-    <widget class="QPushButton" name="reportButton">
+    <widget class="QGraphicsView" name="graphicsViewAnnotation_2">
      <property name="geometry">
       <rect>
-       <x>710</x>
-       <y>540</y>
-       <width>121</width>
-       <height>23</height>
+       <x>120</x>
+       <y>420</y>
+       <width>401</width>
+       <height>331</height>
       </rect>
-     </property>
-     <property name="text">
-      <string>Generate report</string>
      </property>
     </widget>
    </widget>

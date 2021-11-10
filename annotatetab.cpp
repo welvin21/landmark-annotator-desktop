@@ -4,18 +4,26 @@
 AnnotateTab::AnnotateTab(DesktopApp* parent) {
 	this->parent = parent;
 
-	this->image = this->parent->getQCurrentImage().copy();
+	this->colorImage = this->parent->getQCurrentImage().copy();
+	this->depthToColorImage = this->parent->getQCurrentImage().copy();
 
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
-	this->annotatedImage = this->image.copy().scaled(width, height, Qt::KeepAspectRatio);
+	this->annotatedColorImage = this->colorImage.copy().scaled(width, height, Qt::KeepAspectRatio);
 
-	this->scene = new DragAndDropGraphicsScene(this);
+	width = this->parent->ui.graphicsViewAnnotation2->width();  height = this->parent->ui.graphicsViewAnnotation2->height();
+	this->annotatedDepthToColorImage = this->depthToColorImage.copy().scaled(width, height, Qt::KeepAspectRatio);
 
-	this->parent->ui.graphicsViewAnnotation->setScene(this->scene);
+	this->colorScene = new DragAndDropGraphicsScene(this, Color);
+	this->depthToColorScene = new DragAndDropGraphicsScene(this, DepthToColor);
+
+	this->parent->ui.graphicsViewAnnotation->setScene(this->colorScene);
 	this->parent->ui.graphicsViewAnnotation->show();
 
+	this->parent->ui.graphicsViewAnnotation2->setScene(this->depthToColorScene);
+	this->parent->ui.graphicsViewAnnotation2->show();
+
 	QObject::connect(this->parent->ui.annotateButtonAnnotateTab, &QPushButton::clicked, [this]() {
-		int width = this->annotatedImage.width(), height = this->annotatedImage.height();
+		int width = this->annotatedColorImage.width(), height = this->annotatedColorImage.height();
 
 		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
 			int randX = rand() % (width + 1);
@@ -33,7 +41,7 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
         int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
 
         if (!fileName.isEmpty()) {
-            this->annotatedImage.save(fileName);
+            this->annotatedColorImage.save(fileName);
 			
 			QString jsonFileName = QFileDialog::getSaveFileName(this, tr("Save coordinates json file"), QString(), tr("JSON (*.json)"));
 			if (!jsonFileName.isEmpty()) {
@@ -52,34 +60,46 @@ void AnnotateTab::reloadCurrentImage() {
 	// Remove existing annotations in annotations member variable
 	for (int i = 0; i < NUM_ANNOTATIONS; ++i) this->annotations[i] = QPoint();
 
-	this->image = this->parent->getQCurrentImage().copy();
+	this->colorImage = this->parent->getQCurrentImage().copy();
+	this->depthToColorImage = this->parent->getQCurrentImage().copy();
 
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
-	this->annotatedImage = this->image.copy().scaled(width, height, Qt::KeepAspectRatio);
+	this->annotatedColorImage = this->colorImage.copy().scaled(width, height, Qt::KeepAspectRatio);
+
+	width = this->parent->ui.graphicsViewAnnotation2->width(); height = this->parent->ui.graphicsViewAnnotation2->height();
+	this->annotatedDepthToColorImage = this->depthToColorImage.copy().scaled(width, height, Qt::KeepAspectRatio);
 
 	// Deallocate heap memory used by previous GGraphicsScene object
-    if (this->scene) {
-		delete this->scene;
-    }
+    if (this->colorScene) delete this->colorScene;
+	if (this->depthToColorScene) delete this->depthToColorScene;
 
-	this->scene = new DragAndDropGraphicsScene(this);
+	this->colorScene = new DragAndDropGraphicsScene(this, Color);
+	this->depthToColorScene = new DragAndDropGraphicsScene(this, DepthToColor);
 
-	this->parent->ui.graphicsViewAnnotation->setScene(this->scene);
+	this->parent->ui.graphicsViewAnnotation->setScene(this->colorScene);
 	this->parent->ui.graphicsViewAnnotation->show();
+
+	this->parent->ui.graphicsViewAnnotation2->setScene(this->depthToColorScene);
+	this->parent->ui.graphicsViewAnnotation2->show();
+
+    this->parent->ui.annotateButtonAnnotateTab->click();
 }
 
 void AnnotateTab::drawAnnotations() {
 	// Deallocate heap memory used by previous GGraphicsScene object
-    if (this->scene) {
-		delete this->scene;
-    }
+    if (this->colorScene) delete this->colorScene;
+    if (this->depthToColorScene) delete this->depthToColorScene;
 	
 	this->recopyAnnotatedImage();
 
-	this->scene = new DragAndDropGraphicsScene(this);
+	this->colorScene = new DragAndDropGraphicsScene(this, Color);
+	this->depthToColorScene = new DragAndDropGraphicsScene(this, DepthToColor);
 	
-	this->parent->ui.graphicsViewAnnotation->setScene(this->scene);
+	this->parent->ui.graphicsViewAnnotation->setScene(this->colorScene);
     this->parent->ui.graphicsViewAnnotation->show();
+
+	this->parent->ui.graphicsViewAnnotation2->setScene(this->depthToColorScene);
+    this->parent->ui.graphicsViewAnnotation2->show();
 }
 
 
@@ -88,11 +108,15 @@ DesktopApp* AnnotateTab::getParent() {
 }
 
 QImage* AnnotateTab::getImage() {
-	return &this->image;
+	return &this->colorImage;
 }
 
-QImage* AnnotateTab::getAnnotatedImage() {
-	return &this->annotatedImage;
+QImage* AnnotateTab::getAnnotatedColorImage() {
+	return &this->annotatedColorImage;
+}
+
+QImage* AnnotateTab::getAnnotatedDepthToColorImage() {
+	return &this->annotatedDepthToColorImage;
 }
 
 QPointF* AnnotateTab::getAnnotations() {
@@ -106,41 +130,6 @@ int orientation(QPointF p, QPointF q, QPointF r)
 
 	if (val == 0) return 0;  // collinear
 	return (val > 0) ? 1 : 2; // clock or counterclock wise
-}
-
-std::vector<QPointF> AnnotateTab::getConvexHull() {
-	// Min number of points 3
-	if (NUM_ANNOTATIONS < 3) return {};
-
-	// Find leftmost point in annotations
-	int l = 0;
-	for (int i = 1; i < NUM_ANNOTATIONS; i++)
-		if (this->annotations[i].x() < this->annotations[l].x())
-			l = i;
-
-	std::vector<QPointF> convexHullPoints;
-
-	int p = l, q;
-	do
-	{
-		convexHullPoints.push_back(QPointF(this->annotations[p].x(), this->annotations[p].y()));
-
-		q = (p + 1) % NUM_ANNOTATIONS;
-		for (int i = 0; i < NUM_ANNOTATIONS; i++)
-		{
-			if (orientation(this->annotations[p], this->annotations[i], this->annotations[q]) == 2)
-				q = i;
-		}
-
-		p = q;
-
-	} while (p != l);
-	
-	// Copy first point into last element
-	if(convexHullPoints.size() > 0)
-		convexHullPoints.push_back(convexHullPoints[0]);
-
-	return convexHullPoints;
 }
 
 void AnnotateTab::setAnnotationsText() {
@@ -160,7 +149,10 @@ void AnnotateTab::setAnnotationsText() {
 
 void AnnotateTab::recopyAnnotatedImage() {
 	int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
-	this->annotatedImage = this->image.copy().scaled(width, height, Qt::KeepAspectRatio);
+	this->annotatedColorImage = this->colorImage.copy().scaled(width, height, Qt::KeepAspectRatio);
+
+	width = this->parent->ui.graphicsViewAnnotation2->width();  height = this->parent->ui.graphicsViewAnnotation2->height();
+	this->annotatedDepthToColorImage = this->depthToColorImage.copy().scaled(width, height, Qt::KeepAspectRatio);
 }
 
 QJsonDocument AnnotateTab::getAnnotationsJson() {
@@ -182,4 +174,12 @@ QJsonDocument AnnotateTab::getAnnotationsJson() {
 
 	document.setObject(emptyJsonObject);
 	return document;
+}
+
+DragAndDropGraphicsScene* AnnotateTab::getColorScene() {
+	return this->colorScene;
+}
+
+DragAndDropGraphicsScene* AnnotateTab::getDepthToColorScene() {
+	return this->depthToColorScene;
 }
