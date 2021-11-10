@@ -6,16 +6,18 @@
 
 // Forward Declaration
 class AnnotateTab;
+enum ImageType;
 
 class DragAndDropGraphicsScene : public QGraphicsScene {
 public:
-	DragAndDropGraphicsScene(AnnotateTab* annotateTab);
+	DragAndDropGraphicsScene(AnnotateTab* annotateTab, ImageType imageType);
 	void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 	void dropEvent(QGraphicsSceneDragDropEvent* event) override;
 	void dragEnterEvent(QGraphicsSceneDragDropEvent* event) override;
 	void dragMoveEvent(QGraphicsSceneDragDropEvent* event) override;
 
 private:
+	ImageType imageType;
 	AnnotateTab* annotateTab;
 	bool isPoint;
 	int pointIndex;
