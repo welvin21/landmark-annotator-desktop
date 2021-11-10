@@ -25,7 +25,6 @@ public:
     QImage* getAnnotatedColorImage();
     QImage* getAnnotatedDepthToColorImage();
     QPointF* getAnnotations();
-    std::vector<QPointF> getConvexHull();
     void setAnnotationsText();
     void recopyAnnotatedImage();
     DragAndDropGraphicsScene* getColorScene();

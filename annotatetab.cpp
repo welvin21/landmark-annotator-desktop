@@ -86,12 +86,12 @@ void AnnotateTab::reloadCurrentImage() {
 }
 
 void AnnotateTab::drawAnnotations() {
+	this->recopyAnnotatedImage();
+
 	// Deallocate heap memory used by previous GGraphicsScene object
     if (this->colorScene) delete this->colorScene;
     if (this->depthToColorScene) delete this->depthToColorScene;
 	
-	this->recopyAnnotatedImage();
-
 	this->colorScene = new DragAndDropGraphicsScene(this, Color);
 	this->depthToColorScene = new DragAndDropGraphicsScene(this, DepthToColor);
 	
@@ -100,11 +100,6 @@ void AnnotateTab::drawAnnotations() {
 
 	this->parent->ui.graphicsViewAnnotation2->setScene(this->depthToColorScene);
     this->parent->ui.graphicsViewAnnotation2->show();
-}
-
-
-DesktopApp* AnnotateTab::getParent() {
-	return this->parent;
 }
 
 QImage* AnnotateTab::getImage() {
@@ -121,15 +116,6 @@ QImage* AnnotateTab::getAnnotatedDepthToColorImage() {
 
 QPointF* AnnotateTab::getAnnotations() {
 	return this->annotations;
-}
-
-int orientation(QPointF p, QPointF q, QPointF r)
-{
-	int val = (q.y() - p.y()) * (r.x() - q.x()) -
-		(q.x() - p.x()) * (r.y() - q.y());
-
-	if (val == 0) return 0;  // collinear
-	return (val > 0) ? 1 : 2; // clock or counterclock wise
 }
 
 void AnnotateTab::setAnnotationsText() {

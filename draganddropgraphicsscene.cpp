@@ -58,30 +58,29 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 		this->annotateTab->getAnnotations()[this->pointIndex].setY(y);
 
 		QPainter painter(this->annotateTab->getAnnotatedColorImage());
+		QPainter painter2(this->annotateTab->getAnnotatedDepthToColorImage());
+
 		painter.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
+		painter2.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
+
 		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
 			painter.drawPoint(this->annotateTab->getAnnotations()[i].x(), this->annotateTab->getAnnotations()[i].y());
-		}
-
-		painter.end();
-
-		QPainter painter2(this->annotateTab->getAnnotatedDepthToColorImage());
-		painter2.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
-		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
 			painter2.drawPoint(this->annotateTab->getAnnotations()[i].x(), this->annotateTab->getAnnotations()[i].y());
 		}
 
+		painter.end();
 		painter2.end();
-
-		// Create a copy of rescaled annotated image to be displayed
-		int width = this->annotateTab->getParent()->ui.graphicsViewAnnotation->width(), height = this->annotateTab->getParent()->ui.graphicsViewAnnotation->height();
-		QImage annotatedColorImageRescaled = this->annotateTab->getAnnotatedColorImage()->scaled(width, height, Qt::KeepAspectRatio);
-
-		width = this->annotateTab->getParent()->ui.graphicsViewAnnotation2->width();  height = this->annotateTab->getParent()->ui.graphicsViewAnnotation2->height();
-		QImage annotatedDepthToColorImageRescaled = this->annotateTab->getAnnotatedDepthToColorImage()->scaled(width, height, Qt::KeepAspectRatio);
 		
-		this->annotateTab->getColorScene()->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedColorImage()));
-		this->annotateTab->getDepthToColorScene()->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedDepthToColorImage()));
+		if (this->imageType == Color) {
+			this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedColorImage()));
+			this->annotateTab->getDepthToColorScene()->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedDepthToColorImage()));
+		}
+
+		if (this->imageType == DepthToColor) {
+			this->annotateTab->getColorScene()->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedColorImage()));
+			this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedDepthToColorImage()));
+		}
+			
 		this->annotateTab->setAnnotationsText();
 	}
 	
