@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1048</width>
-    <height>806</height>
+    <width>1351</width>
+    <height>911</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,12 +18,12 @@
     <rect>
      <x>80</x>
      <y>10</y>
-     <width>885</width>
-     <height>761</height>
+     <width>1191</width>
+     <height>871</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -64,16 +64,16 @@
       <rect>
        <x>70</x>
        <y>70</y>
-       <width>731</width>
-       <height>291</height>
+       <width>631</width>
+       <height>321</height>
       </rect>
      </property>
     </widget>
     <widget class="QPushButton" name="captureButton">
      <property name="geometry">
       <rect>
-       <x>280</x>
-       <y>650</y>
+       <x>460</x>
+       <y>740</y>
        <width>75</width>
        <height>23</height>
       </rect>
@@ -85,18 +85,18 @@
     <widget class="QGraphicsView" name="graphicsViewImage">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>380</y>
-       <width>321</width>
-       <height>251</height>
+       <x>310</x>
+       <y>420</y>
+       <width>591</width>
+       <height>301</height>
       </rect>
      </property>
     </widget>
     <widget class="QPushButton" name="saveButtonCaptureTab">
      <property name="geometry">
       <rect>
-       <x>410</x>
-       <y>650</y>
+       <x>590</x>
+       <y>740</y>
        <width>75</width>
        <height>23</height>
       </rect>
@@ -108,8 +108,8 @@
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>280</x>
-       <y>690</y>
+       <x>460</x>
+       <y>780</y>
        <width>323</width>
        <height>19</height>
       </rect>
@@ -148,23 +148,23 @@
     <widget class="QPushButton" name="annotateButtonCaptureTab">
      <property name="geometry">
       <rect>
-       <x>530</x>
-       <y>650</y>
+       <x>710</x>
+       <y>740</y>
        <width>75</width>
        <height>23</height>
       </rect>
      </property>
      <property name="text">
-      <string>annotate</string>
+      <string>AI analysis</string>
      </property>
     </widget>
     <widget class="QGraphicsView" name="graphicsViewVideo5">
      <property name="geometry">
       <rect>
-       <x>70</x>
-       <y>380</y>
-       <width>401</width>
-       <height>251</height>
+       <x>720</x>
+       <y>70</y>
+       <width>381</width>
+       <height>321</height>
       </rect>
      </property>
     </widget>
@@ -176,7 +176,7 @@
     <widget class="QGraphicsView" name="graphicsViewAnnotation">
      <property name="geometry">
       <rect>
-       <x>50</x>
+       <x>210</x>
        <y>40</y>
        <width>771</width>
        <height>441</height>
@@ -186,7 +186,7 @@
     <widget class="QPushButton" name="annotateButtonAnnotateTab">
      <property name="geometry">
       <rect>
-       <x>290</x>
+       <x>450</x>
        <y>540</y>
        <width>121</width>
        <height>23</height>
@@ -215,7 +215,7 @@
     <widget class="QPushButton" name="saveButtonAnnotateTab">
      <property name="geometry">
       <rect>
-       <x>480</x>
+       <x>640</x>
        <y>540</y>
        <width>75</width>
        <height>23</height>
@@ -223,6 +223,19 @@
      </property>
      <property name="text">
       <string>Save</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="reportButton">
+     <property name="geometry">
+      <rect>
+       <x>770</x>
+       <y>540</y>
+       <width>121</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Generate report</string>
      </property>
     </widget>
    </widget>

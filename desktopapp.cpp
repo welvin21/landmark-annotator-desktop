@@ -31,6 +31,7 @@ DesktopApp::DesktopApp(QWidget* parent)
     deviceConfig.color_format = K4A_IMAGE_FORMAT_COLOR_BGRA32;
     deviceConfig.color_resolution = K4A_COLOR_RESOLUTION_720P;
     deviceConfig.depth_mode = K4A_DEPTH_MODE_NFOV_UNBINNED;
+    deviceConfig.depth_delay_off_color_usec = 0;
 
     if (K4A_FAILED(k4a_device_start_cameras(device, &this->deviceConfig))) {
         this->setTextOnGraphicsViews("Failed to start cameras");
