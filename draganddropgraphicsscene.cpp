@@ -9,11 +9,13 @@ DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab, Im
 	QPainter painter(this->imageType == Color ? this->annotateTab->getAnnotatedColorImage() : this->annotateTab->getAnnotatedDepthToColorImage());
 
 	painter.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
+	for(auto it: *this->annotateTab->getAnnotations()) {
+		if(!it.second.isNull()) painter.drawPoint(it.second.x(), it.second.y());
+	}
 
-	for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
-		if (!this->annotateTab->getAnnotations()[i].isNull()) {
-			painter.drawPoint(this->annotateTab->getAnnotations()[i].x(), this->annotateTab->getAnnotations()[i].y());
-		}
+	painter.setPen(QPen(Qt::white , 2, Qt::SolidLine, Qt::RoundCap));
+	for(auto it: *this->annotateTab->getAnnotations()) {
+		if(!it.second.isNull()) painter.drawText(it.second.x(), it.second.y(), QString::fromStdString(it.first));
 	}
 
 	painter.end();
@@ -25,12 +27,12 @@ DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab, Im
 void DragAndDropGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 	float x = event->scenePos().x(), y = event->scenePos().y();
 	this->isPoint = false;
-	this->pointIndex = -1;
+	this->pointKey = "";
 
-	for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
-		if (abs(this->annotateTab->getAnnotations()[i].x() - x) <= 5 && abs(this->annotateTab->getAnnotations()[i].y() - y) <= 5) {
+	for(auto it: *this->annotateTab->getAnnotations()) {
+		if (abs(it.second.x() - x) <= 5 && abs(it.second.y() - y) <= 5) {
 			this->isPoint = true;
-			this->pointIndex = i;
+			this->pointKey = it.first;
 		}
 	}
 
@@ -54,18 +56,24 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 		this->annotateTab->recopyAnnotatedImage();
 
 		float x = event->scenePos().x(), y = event->scenePos().y();
-		this->annotateTab->getAnnotations()[this->pointIndex].setX(x);
-		this->annotateTab->getAnnotations()[this->pointIndex].setY(y);
+		(*this->annotateTab->getAnnotations())[this->pointKey].setX(x);
+		(*this->annotateTab->getAnnotations())[this->pointKey].setY(y);
 
 		QPainter painter(this->annotateTab->getAnnotatedColorImage());
 		QPainter painter2(this->annotateTab->getAnnotatedDepthToColorImage());
 
 		painter.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
 		painter2.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
+		for(auto it: *this->annotateTab->getAnnotations()) {
+			painter.drawPoint(it.second.x(), it.second.y());
+			painter2.drawPoint(it.second.x(), it.second.y());
+		}
 
-		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
-			painter.drawPoint(this->annotateTab->getAnnotations()[i].x(), this->annotateTab->getAnnotations()[i].y());
-			painter2.drawPoint(this->annotateTab->getAnnotations()[i].x(), this->annotateTab->getAnnotations()[i].y());
+		painter.setPen(QPen(Qt::white , 2, Qt::SolidLine, Qt::RoundCap));
+		painter2.setPen(QPen(Qt::white , 2, Qt::SolidLine, Qt::RoundCap));
+		for(auto it: *this->annotateTab->getAnnotations()) {
+			painter.drawText(it.second.x(), it.second.y(), QString::fromStdString(it.first));
+			painter2.drawText(it.second.x(), it.second.y(), QString::fromStdString(it.first));
 		}
 
 		painter.end();

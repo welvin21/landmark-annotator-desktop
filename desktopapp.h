@@ -2,6 +2,8 @@
 #define DESKTOPAPP_H
 
 #define MAX_IMAGE_QUEUE_SIZE 10
+#define MAX_GYROSCOPE_QUEUE_SIZE 30
+#define MAX_ACCELEROMETER_QUEUE_SIZE 30
 
 #include <QtWidgets/QWidget>
 #include "ui_desktopapp.h"
@@ -27,6 +29,7 @@ public:
     k4a_device_t device = NULL;
     k4a_device_configuration_t deviceConfig = K4A_DEVICE_CONFIG_INIT_DISABLE_ALL;
     k4a_capture_t capture = NULL;
+    k4a_imu_sample_t imuSample;
     
     ViewTab* viewTab;
     CaptureTab* captureTab;
@@ -35,6 +38,8 @@ public:
     std::queue<k4a_image_t> colorImageQueue;
     std::queue<k4a_image_t> depthImageQueue;
     std::queue<k4a_image_t> irImageQueue;
+    std::deque<k4a_float3_t> gyroSampleQueue;
+    std::deque<k4a_float3_t> accSampleQueue;
     QImage currentCapturedImage;
 
     void setTextOnGraphicsViews(char* text);

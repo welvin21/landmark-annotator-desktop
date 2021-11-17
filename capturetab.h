@@ -26,6 +26,8 @@ private:
     QImage depthToColorImage;
     void setDefaultCaptureMode();
     void registerRadioButtonOnClicked(QRadioButton* radioButton, QImage* image);
+    void drawGyroscopeData();
+    void drawAccelerometerData();
 };
 
 #endif

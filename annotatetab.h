@@ -20,11 +20,10 @@ public:
     AnnotateTab(DesktopApp* parent);
 
     void reloadCurrentImage();
-    DesktopApp* getParent();
     QImage* getImage();
     QImage* getAnnotatedColorImage();
     QImage* getAnnotatedDepthToColorImage();
-    QPointF* getAnnotations();
+    std::map<std::string, QPointF>* getAnnotations();
     void setAnnotationsText();
     void recopyAnnotatedImage();
     DragAndDropGraphicsScene* getColorScene();
@@ -35,7 +34,7 @@ private:
     QImage annotatedColorImage;
     QImage depthToColorImage;
     QImage annotatedDepthToColorImage;
-    QPointF annotations[NUM_ANNOTATIONS];
+    std::map<std::string, QPointF> annotations;
     DesktopApp* parent;
     DragAndDropGraphicsScene* colorScene;
     DragAndDropGraphicsScene* depthToColorScene;
@@ -43,6 +42,6 @@ private:
     QJsonDocument getAnnotationsJson();
 };
 
-// Helper function for calculating convex hull given a set of points
-int orientation(QPointF p, QPointF q, QPointF r);
+// Helper functions
+QPointF getRandomPoint(int maxWidth, int maxHeight);
 #endif

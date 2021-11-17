@@ -1,6 +1,13 @@
 #include "annotatetab.h"
 #include "draganddropgraphicsscene.h"
 
+QPointF getRandomPoint(int maxWidth, int maxHeight) {
+	int randX = rand() % (maxWidth + 1);
+	int randY = rand() % (maxHeight + 1);
+
+	return QPointF((float) randX, (float) randY);
+}
+
 AnnotateTab::AnnotateTab(DesktopApp* parent) {
 	this->parent = parent;
 
@@ -25,12 +32,15 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 	QObject::connect(this->parent->ui.annotateButtonAnnotateTab, &QPushButton::clicked, [this]() {
 		int width = this->annotatedColorImage.width(), height = this->annotatedColorImage.height();
 
-		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
-			int randX = rand() % (width + 1);
-			int randY = rand() % (height + 1);
+		// Reset annotations
+		this->annotations.clear();
 
-			this->annotations[i] = QPointF((float) randX, (float) randY);
-		}
+		this->annotations.insert({"a", getRandomPoint(width, height)});
+		this->annotations.insert({"b1", getRandomPoint(width, height)});
+		this->annotations.insert({"b2", getRandomPoint(width, height)});
+		this->annotations.insert({"c1", getRandomPoint(width, height)});
+		this->annotations.insert({"c2", getRandomPoint(width, height)});
+		this->annotations.insert({"d", getRandomPoint(width, height)});
 
 		this->drawAnnotations();
 		this->setAnnotationsText();
@@ -58,7 +68,7 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 
 void AnnotateTab::reloadCurrentImage() {
 	// Remove existing annotations in annotations member variable
-	for (int i = 0; i < NUM_ANNOTATIONS; ++i) this->annotations[i] = QPoint();
+	for (auto it : this->annotations) this->annotations[it.first] = QPointF();
 
 	this->colorImage = this->parent->captureTab->getQCapturedColorImage().copy();
 	this->depthToColorImage = this->parent->captureTab->getQCapturedDepthToColorImage().copy();
@@ -114,17 +124,17 @@ QImage* AnnotateTab::getAnnotatedDepthToColorImage() {
 	return &this->annotatedDepthToColorImage;
 }
 
-QPointF* AnnotateTab::getAnnotations() {
-	return this->annotations;
+std::map<std::string, QPointF>* AnnotateTab::getAnnotations() {
+	return &this->annotations;
 }
 
 void AnnotateTab::setAnnotationsText() {
 	QString text = "";
-	if (this->annotations[0].isNull()) text.append("No annotations");
+	if (this->annotations["a"].isNull()) text.append("No annotations");
 	else {
-		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
-			int x = this->annotations[i].x(), y = this->annotations[i].y();
-			std::string plain_s = "Point " + std::to_string(i) + ": (" + std::to_string(x) + ", " + std::to_string(y) + ")\n";
+		for(auto it: this->annotations) {
+			int x = it.second.x(), y = it.second.y();
+			std::string plain_s = "Point " + it.first + ": (" + std::to_string(x) + ", " + std::to_string(y) + ")\n";
 			QString str = QString::fromUtf8(plain_s.c_str());
 			text.append(str);
 		}
@@ -145,14 +155,14 @@ QJsonDocument AnnotateTab::getAnnotationsJson() {
 	QJsonObject emptyJsonObject{};
 	QJsonDocument document;
 
-	if (!this->annotations[0].isNull()) {
+	if (!this->annotations["a"].isNull()) {
 		QJsonObject coordinates;
 
-		for (int i = 0; i < NUM_ANNOTATIONS; ++i) {
+		for(auto it: this->annotations) {
 			QJsonObject coordinate;
-			coordinate.insert("x", this->annotations[i].x());
-			coordinate.insert("y", this->annotations[i].y());
-			coordinates.insert(QString::number(i), coordinate);
+			coordinate.insert("x", it.second.x());
+			coordinate.insert("y", it.second.y());
+			coordinates.insert(QString::fromStdString(it.first), coordinate);
 		}
 
 		emptyJsonObject.insert("coordinates", coordinates);

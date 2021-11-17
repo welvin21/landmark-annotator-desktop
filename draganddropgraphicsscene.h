@@ -20,7 +20,7 @@ private:
 	ImageType imageType;
 	AnnotateTab* annotateTab;
 	bool isPoint;
-	int pointIndex;
+	std::string pointKey;
 };
 
 #endif
