@@ -14,7 +14,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), QString(), tr("Images (*.png)"));
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        QImage image = this->parent->getQCurrentImage().scaled(width, height, Qt::KeepAspectRatio);
+        QImage image = this->parent->currentCapturedImage.scaled(width, height, Qt::KeepAspectRatio);
 
         if (!fileName.isEmpty())
         {
@@ -44,7 +44,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         }
 
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        this->parent->currentImage = image.copy();
+        this->parent->currentCapturedImage = image.copy();
 
         QImage imageScaled = image.scaled(width, height, Qt::KeepAspectRatio);
 
@@ -65,6 +65,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         // Move to annotate tab whose index is 2
         this->parent->annotateTab->reloadCurrentImage();
         this->parent->ui.tabWidget->setCurrentIndex(2);
+        this->parent->ui.annotateButtonAnnotateTab->click();
     });
 
     this->timer = new QTimer;
@@ -116,7 +117,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
                     QImage qDepthImage = (this->parent->getQDepthImage()).scaled(width, height, Qt::KeepAspectRatio);
 
                     // Deallocate heap memory used by previous GGraphicsScene object
-                    if (this->parent->ui.graphicsViewVideo->scene()) {
+                    if (this->parent->ui.graphicsViewVideo5->scene()) {
                         delete this->parent->ui.graphicsViewVideo5->scene();
                     }
 
@@ -138,6 +139,29 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             else {
                 qDebug() << "No capture found\n";
             }
+
+            // Capture a imu sample
+            switch (k4a_device_get_imu_sample(this->parent->device, &this->parent->imuSample, K4A_WAIT_INFINITE)) {
+                case K4A_WAIT_RESULT_SUCCEEDED:
+                    break;
+            }
+
+            if (&this->parent->imuSample != NULL) {
+                this->parent->gyroSampleQueue.push_back(this->parent->imuSample.gyro_sample);
+                this->parent->accSampleQueue.push_back(this->parent->imuSample.acc_sample);
+
+                QString text;
+                text += ("Temperature: " + QString::number(this->parent->imuSample.temperature, 0, 2) + " C\n");
+                this->parent->ui.imuText->setText(text);
+            }
+
+            while (this->parent->gyroSampleQueue.size() > MAX_GYROSCOPE_QUEUE_SIZE) this->parent->gyroSampleQueue.pop_front();
+
+            while (this->parent->accSampleQueue.size() > MAX_ACCELEROMETER_QUEUE_SIZE) this->parent->accSampleQueue.pop_front();
+
+            if (this->parent->gyroSampleQueue.size() >= MAX_GYROSCOPE_QUEUE_SIZE) this->drawGyroscopeData();
+
+            if (this->parent->accSampleQueue.size() >= MAX_ACCELEROMETER_QUEUE_SIZE) this->drawAccelerometerData();
         }
     });
 
@@ -153,7 +177,7 @@ void CaptureTab::setDefaultCaptureMode() {
 void CaptureTab::registerRadioButtonOnClicked(QRadioButton* radioButton, QImage* image) {
     QObject::connect(radioButton, &QRadioButton::clicked, [this, image]() {
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        this->parent->currentImage = (*image).copy();
+        this->parent->currentCapturedImage = (*image).copy();
 
         QImage imageScaled = (*image).scaled(width, height, Qt::KeepAspectRatio);
 
@@ -170,3 +194,91 @@ void CaptureTab::registerRadioButtonOnClicked(QRadioButton* radioButton, QImage*
         this->parent->ui.graphicsViewImage->show();
     });
 }
+
+QImage CaptureTab::getQCapturedColorImage() {
+    return this->colorImage;
+}
+
+QImage CaptureTab::getQCapturedDepthToColorImage() {
+    return this->depthToColorImage;
+}
+
+void CaptureTab::drawGyroscopeData() {
+    // Deallocate heap memory used by previous GGraphicsScene object
+    if (this->parent->ui.graphicsViewGyroscope->scene()) {
+        delete this->parent->ui.graphicsViewGyroscope->scene();
+    }
+
+    int width = this->parent->ui.graphicsViewGyroscope->width(), height = this->parent->ui.graphicsViewGyroscope->height();
+    QGraphicsScene* scene = new QGraphicsScene();
+    QImage image = QPixmap(0.95 * width, 0.95 * height).toImage();
+
+    QPainter painter(&image);
+    painter.setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap));
+
+    for (int i = 0; i < MAX_GYROSCOPE_QUEUE_SIZE - 1; ++i) {
+        int segmentLength = width / MAX_GYROSCOPE_QUEUE_SIZE;
+        int segmentHeight = height / 3;
+
+        // Draw  gyroscope measurement w.r.t x-axis
+        int leftSegmentHeight = 2 * this->parent->gyroSampleQueue[i].xyz.x;
+        int rightSegmentHeight = 2 * this->parent->gyroSampleQueue[i + 1].xyz.x;
+        painter.drawLine(i * segmentLength, segmentHeight / 2 + leftSegmentHeight, (i + 1) * segmentLength, segmentHeight / 2 + rightSegmentHeight);
+
+        // Draw  gyroscope measurement w.r.t y-axis
+        leftSegmentHeight = 2 * this->parent->gyroSampleQueue[i].xyz.y;
+        rightSegmentHeight = 2 * this->parent->gyroSampleQueue[i + 1].xyz.y;
+        painter.drawLine(i * segmentLength, 3 * segmentHeight / 2 + leftSegmentHeight, (i + 1) * segmentLength, 3 * segmentHeight / 2 + rightSegmentHeight);
+
+        // Draw  gyroscope measurement w.r.t z-axis
+        leftSegmentHeight = 2 * this->parent->gyroSampleQueue[i].xyz.z;
+        rightSegmentHeight = 2 * this->parent->gyroSampleQueue[i + 1].xyz.z;
+        painter.drawLine(i * segmentLength, 5 * segmentHeight / 2 + leftSegmentHeight, (i + 1) * segmentLength, 5 * segmentHeight / 2 + rightSegmentHeight);
+    }
+
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+    scene->addItem(item);
+
+    this->parent->ui.graphicsViewGyroscope->setScene(scene);
+}
+
+void CaptureTab::drawAccelerometerData() {
+    // Deallocate heap memory used by previous GGraphicsScene object
+    if (this->parent->ui.graphicsViewAccelerometer->scene()) {
+        delete this->parent->ui.graphicsViewAccelerometer->scene();
+    }
+
+    int width = this->parent->ui.graphicsViewAccelerometer->width(), height = this->parent->ui.graphicsViewAccelerometer->height();
+    QGraphicsScene* scene = new QGraphicsScene();
+    QImage image = QPixmap(0.95 * width, 0.95 * height).toImage();
+
+    QPainter painter(&image);
+    painter.setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap));
+
+    for (int i = 0; i < MAX_ACCELEROMETER_QUEUE_SIZE - 1; ++i) {
+        int segmentLength = width / MAX_ACCELEROMETER_QUEUE_SIZE;
+        int segmentHeight = height / 3;
+
+        // Draw  gyroscope measurement w.r.t x-axis
+        int leftSegmentHeight = 2 * this->parent->accSampleQueue[i].xyz.x;
+        int rightSegmentHeight = 2 * this->parent->accSampleQueue[i + 1].xyz.x;
+        painter.drawLine(i * segmentLength, segmentHeight / 2 + leftSegmentHeight, (i + 1) * segmentLength, segmentHeight / 2 + rightSegmentHeight);
+
+        // Draw  gyroscope measurement w.r.t y-axis
+        leftSegmentHeight = 2 * this->parent->accSampleQueue[i].xyz.y;
+        rightSegmentHeight = 2 * this->parent->accSampleQueue[i + 1].xyz.y;
+        painter.drawLine(i * segmentLength, 3 * segmentHeight / 2 + leftSegmentHeight, (i + 1) * segmentLength, 3 * segmentHeight / 2 + rightSegmentHeight);
+
+        // Draw  gyroscope measurement w.r.t z-axis
+        leftSegmentHeight = 2 * this->parent->accSampleQueue[i].xyz.z;
+        rightSegmentHeight = 2 * this->parent->accSampleQueue[i + 1].xyz.z;
+        painter.drawLine(i * segmentLength, 5 * segmentHeight / 2 + leftSegmentHeight, (i + 1) * segmentLength, 5 * segmentHeight / 2 + rightSegmentHeight);
+    }
+
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+    scene->addItem(item);
+
+    this->parent->ui.graphicsViewAccelerometer->setScene(scene);
+}
+
+

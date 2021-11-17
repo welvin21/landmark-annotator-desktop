@@ -8,6 +8,9 @@
 #include <k4a/k4a.hpp>
 #include <opencv2/opencv.hpp>
 #include "draganddropgraphicsscene.h"
+#include "capturetab.h"
+
+enum ImageType {Color, DepthToColor};
 
 class AnnotateTab : public QWidget
 {
@@ -17,24 +20,28 @@ public:
     AnnotateTab(DesktopApp* parent);
 
     void reloadCurrentImage();
-    DesktopApp* getParent();
     QImage* getImage();
-    QImage* getAnnotatedImage();
-    QPointF* getAnnotations();
-    std::vector<QPointF> getConvexHull();
+    QImage* getAnnotatedColorImage();
+    QImage* getAnnotatedDepthToColorImage();
+    std::map<std::string, QPointF>* getAnnotations();
     void setAnnotationsText();
     void recopyAnnotatedImage();
+    DragAndDropGraphicsScene* getColorScene();
+    DragAndDropGraphicsScene* getDepthToColorScene();
 
 private:
-    QImage image;
-    QImage annotatedImage;
-    QPointF annotations[NUM_ANNOTATIONS];
+    QImage colorImage;
+    QImage annotatedColorImage;
+    QImage depthToColorImage;
+    QImage annotatedDepthToColorImage;
+    std::map<std::string, QPointF> annotations;
     DesktopApp* parent;
-    DragAndDropGraphicsScene* scene;
+    DragAndDropGraphicsScene* colorScene;
+    DragAndDropGraphicsScene* depthToColorScene;
     void drawAnnotations();
     QJsonDocument getAnnotationsJson();
 };
 
-// Helper function for calculating convex hull given a set of points
-int orientation(QPointF p, QPointF q, QPointF r);
+// Helper functions
+QPointF getRandomPoint(int maxWidth, int maxHeight);
 #endif

@@ -31,12 +31,20 @@ DesktopApp::DesktopApp(QWidget* parent)
     deviceConfig.color_format = K4A_IMAGE_FORMAT_COLOR_BGRA32;
     deviceConfig.color_resolution = K4A_COLOR_RESOLUTION_720P;
     deviceConfig.depth_mode = K4A_DEPTH_MODE_NFOV_UNBINNED;
+    deviceConfig.depth_delay_off_color_usec = 0;
 
     if (K4A_FAILED(k4a_device_start_cameras(device, &this->deviceConfig))) {
         this->setTextOnGraphicsViews("Failed to start cameras");
 
         k4a_device_close(device);
-       return;
+        return;
+    }
+
+    if (K4A_FAILED(k4a_device_start_imu(device))) {
+        this->setTextOnGraphicsViews("Failed to start IMU");
+
+        k4a_device_close(device);
+        return;
     }
 
     this->viewTab = new ViewTab(this);
@@ -261,8 +269,4 @@ QImage DesktopApp::getQColorToDepthImage() {
     k4a_image_release(k4aColorImage);
     k4a_image_release(k4aDepthImage);
     return qEmptyImage;
-}
-
-QImage DesktopApp::getQCurrentImage() {
-    return this->currentImage;
 }

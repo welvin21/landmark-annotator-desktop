@@ -104,7 +104,7 @@
   <ItemGroup>
     <ClCompile Include="annotatetab.cpp" />
     <ClCompile Include="capturetab.cpp" />
-    <ClCompile Include="draganddropgrahicsscene.cpp" />
+    <ClCompile Include="draganddropgraphicsscene.cpp" />
     <ClCompile Include="viewtab.cpp" />
     <QtRcc Include="desktopapp.qrc" />
     <QtUic Include="desktopapp.ui" />
