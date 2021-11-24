@@ -17,9 +17,13 @@ public:
     QTimer* timer;
     QImage getQCapturedColorImage();
     QImage getQCapturedDepthToColorImage();
+    k4a_image_t* getK4aDepthToColorImage();
+    k4a_image_t* getK4aPointCloud();
 
 private:
     DesktopApp* parent;
+    k4a_image_t k4aDepthToColorImage;
+    k4a_image_t k4aPointCloud;
     QImage colorImage;
     QImage depthImage;
     QImage colorToDepthImage;

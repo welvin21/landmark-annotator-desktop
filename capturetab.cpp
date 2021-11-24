@@ -281,4 +281,10 @@ void CaptureTab::drawAccelerometerData() {
     this->parent->ui.graphicsViewAccelerometer->setScene(scene);
 }
 
+k4a_image_t* CaptureTab::getK4aDepthToColorImage() {
+    return &(this->k4aDepthToColorImage);
+}
 
+k4a_image_t* CaptureTab::getK4aPointCloud() {
+    return &(this->k4aPointCloud);
+}

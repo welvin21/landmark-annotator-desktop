@@ -181,10 +181,20 @@ QImage DesktopApp::getQDepthToColorImage() {
         cv::convertScaleAbs(matAlignmentImageRaw, matAlignmentImage, 255 / max);
 
         cv::Mat temp;
-        cv::applyColorMap(matAlignmentImage, temp, cv:: COLORMAP_HSV);
-        
+        cv::applyColorMap(matAlignmentImage, temp, cv:: COLORMAP_RAINBOW);
+
         QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
         qImage.bits();
+
+        // Copy alignmentImage of type k4a_image_t as a member variable of captureTab (this->captureTab->k4aDepthToColorImage)
+        if (this->copyk4aImage(&alignmentImage, this->captureTab->getK4aDepthToColorImage()) != K4A_RESULT_SUCCEEDED) {
+            qDebug() << "Failed to copy k4a image";
+        }
+
+        // Get point cloud alignment and copy as a member variable of captureTab (this->captureTab->k4aPointCloud)
+        if(this->alignk4APointCloud(&alignmentImage, this->captureTab->getK4aPointCloud()) != K4A_RESULT_SUCCEEDED) {
+            qDebug() << "Failed to align point cloud";
+        }
 
         k4a_transformation_destroy(transformationHandle);
         k4a_image_release(alignmentImage);
@@ -269,4 +279,47 @@ QImage DesktopApp::getQColorToDepthImage() {
     k4a_image_release(k4aColorImage);
     k4a_image_release(k4aDepthImage);
     return qEmptyImage;
+}
+
+k4a_result_t DesktopApp::copyk4aImage(k4a_image_t* src, k4a_image_t* target) {
+    return k4a_image_create_from_buffer(
+        k4a_image_get_format(*src),
+        k4a_image_get_width_pixels(*src),
+        k4a_image_get_height_pixels(*src),
+        k4a_image_get_stride_bytes(*src),
+        k4a_image_get_buffer(*src),
+        k4a_image_get_size(*src),
+        NULL,
+        NULL,
+        target
+    );
+}
+
+k4a_result_t DesktopApp::alignk4APointCloud(k4a_image_t* k4aDepthImage, k4a_image_t* target) {
+    if (k4a_image_create(
+            K4A_IMAGE_FORMAT_CUSTOM,
+            k4a_image_get_width_pixels(*k4aDepthImage),
+            k4a_image_get_height_pixels(*k4aDepthImage),
+            6 * k4a_image_get_width_pixels(*k4aDepthImage),
+            target
+        ) != K4A_RESULT_SUCCEEDED) return K4A_RESULT_FAILED;
+
+    k4a_calibration_t calibration;
+    if (k4a_device_get_calibration(this->device, this->deviceConfig.depth_mode, this->deviceConfig.color_resolution, &calibration) != K4A_RESULT_SUCCEEDED) {
+        return K4A_RESULT_FAILED;
+    }
+
+    k4a_transformation_t transformationHandle = k4a_transformation_create(&calibration);
+
+    k4a_result_t output =
+        k4a_transformation_depth_image_to_point_cloud(
+            transformationHandle,
+            *k4aDepthImage,
+            K4A_CALIBRATION_TYPE_COLOR,
+            *target
+        );
+
+    k4a_transformation_destroy(transformationHandle);
+
+    return output;
 }
