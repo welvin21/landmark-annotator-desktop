@@ -32,6 +32,7 @@ DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab, Im
 	painter.end();
 
 	this->addPixmap(QPixmap::fromImage(this->imageType == Color ? *this->annotateTab->getAnnotatedColorImage() : *this->annotateTab->getAnnotatedDepthToColorImage()));
+	this->annotateTab->computeMetrics();
 	this->annotateTab->setAnnotationsText();
 }
 
@@ -129,6 +130,7 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 			this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedDepthToColorImage()));
 		}
 
+		this->annotateTab->computeMetrics();
 		this->annotateTab->setAnnotationsText();
 	}
 	

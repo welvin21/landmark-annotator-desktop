@@ -31,6 +31,7 @@ public:
     int* getScalingFactor();
     std::map<std::string, QVector3D>* getAnnotations3D();
     QVector3D query3DPoint(int x, int y);
+    void computeMetrics();
 
 private:
     QImage colorImage;
@@ -45,6 +46,12 @@ private:
     int scalingFactor;
     void drawAnnotations();
     QJsonDocument getAnnotationsJson();
+
+    // Metrics
+    float distance1; // Distance between b1 and b2 in cm
+    float distance2; // Distance between c1 and c2 in cm
+    float angle1; // Distance between b1-b2 line and xy-plane in deg
+    float angle2; // Angle between c1-c2 line and xy-plane in deg
 };
 
 // Helper functions

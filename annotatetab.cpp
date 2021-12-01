@@ -62,6 +62,7 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 		}
 
 		this->drawAnnotations();
+		this->computeMetrics();
 		this->setAnnotationsText();
 	});
 
@@ -156,11 +157,10 @@ void AnnotateTab::setAnnotationsText() {
 		text.append(str);
 	}
 
-	float distance1 = this->annotations3D["b1"].distanceToPoint(this->annotations3D["b2"]);
-	float distance2 = this->annotations3D["c1"].distanceToPoint(this->annotations3D["c2"]);
-
-	text.append(QString::fromStdString("Distance 1 ( b1 - b2 ):" + std::to_string(distance1 / 10) + " cm\n"));
-	text.append(QString::fromStdString("Distance 2 ( c1 - c2 ):" + std::to_string(distance2 / 10) + " cm\n"));
+	text.append(QString::fromStdString("Distance 1 ( b1 - b2 ): " + std::to_string(this->distance1) + " cm\n"));
+	text.append(QString::fromStdString("Distance 2 ( c1 - c2 ): " + std::to_string(this->distance2) + " cm\n"));
+	text.append(QString::fromStdString("Alpha: " + std::to_string(this->angle1) + " degree\n"));
+	text.append(QString::fromStdString("Beta: " + std::to_string(this->angle2) + " degree\n"));
 
 	this->parent->ui.annotationsText->setText(text);
 }
@@ -212,4 +212,20 @@ std::map<std::string, QVector3D>* AnnotateTab::getAnnotations3D() {
 
 QVector3D AnnotateTab::query3DPoint(int x, int y) {
 	return this->parent->captureTab->query3DPoint(x, y);
+}
+
+void AnnotateTab::computeMetrics() {
+	const float PI = 3.14159265;
+	this->distance1 = this->annotations3D["b1"].distanceToPoint(this->annotations3D["b2"])/10;
+	this->distance2 = this->annotations3D["c1"].distanceToPoint(this->annotations3D["c2"])/10;
+	
+	//Angle between b1-b2 line and xy-plane
+	float zDiff = this->annotations3D["b1"].z() - this->annotations3D["b2"].z();
+	float xyDistance = std::sqrt(std::pow(this->annotations3D["b1"].x() - this->annotations3D["b2"].x(), 2) + std::pow(this->annotations3D["b1"].x() - this->annotations3D["b2"].x(), 2));
+	this->angle1 = std::atan(zDiff/xyDistance) * 180 / PI;
+
+	//Angle between c1-c2 line and xy-plane
+	zDiff = this->annotations3D["c1"].z() - this->annotations3D["c2"].z();
+	xyDistance = std::sqrt(std::pow(this->annotations3D["c1"].x() - this->annotations3D["c2"].x(), 2) + std::pow(this->annotations3D["c1"].x() - this->annotations3D["c2"].x(), 2));
+	this->angle2 = std::atan(zDiff/xyDistance) * 180 / PI;
 }
