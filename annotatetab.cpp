@@ -156,6 +156,12 @@ void AnnotateTab::setAnnotationsText() {
 		text.append(str);
 	}
 
+	float distance1 = this->annotations3D["b1"].distanceToPoint(this->annotations3D["b2"]);
+	float distance2 = this->annotations3D["c1"].distanceToPoint(this->annotations3D["c2"]);
+
+	text.append(QString::fromStdString("Distance 1 ( b1 - b2 ):" + std::to_string(distance1 / 10) + " cm\n"));
+	text.append(QString::fromStdString("Distance 2 ( c1 - c2 ):" + std::to_string(distance2 / 10) + " cm\n"));
+
 	this->parent->ui.annotationsText->setText(text);
 }
 
