@@ -42,7 +42,27 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 		this->annotations.insert({"c2", getRandomPoint(width, height)});
 		this->annotations.insert({"d", getRandomPoint(width, height)});
 
+		int x, y;
+		this->scalingFactor = std::min(this->depthToColorImage.width() / this->annotatedDepthToColorImage.width(), this->depthToColorImage.height() / this->annotatedDepthToColorImage.height());
+
+		for (auto it : this->annotations) {
+			x = it.second.x();
+			y = it.second.y();
+			x *= this->scalingFactor;
+			y *= this->scalingFactor;
+			QVector3D vector3D = this->parent->captureTab->query3DPoint(x, y);
+			
+			if (this->annotations3D.find(it.first) == this->annotations3D.end()) {
+				this->annotations3D.insert({ it.first, vector3D });
+			} else {
+				this->annotations3D[it.first].setX(vector3D.x());
+				this->annotations3D[it.first].setY(vector3D.y());
+				this->annotations3D[it.first].setZ(vector3D.z());
+			}
+		}
+
 		this->drawAnnotations();
+		this->computeMetrics();
 		this->setAnnotationsText();
 	});
 
@@ -130,15 +150,17 @@ std::map<std::string, QPointF>* AnnotateTab::getAnnotations() {
 
 void AnnotateTab::setAnnotationsText() {
 	QString text = "";
-	if (this->annotations["a"].isNull()) text.append("No annotations");
-	else {
-		for(auto it: this->annotations) {
-			int x = it.second.x(), y = it.second.y();
-			std::string plain_s = "Point " + it.first + ": (" + std::to_string(x) + ", " + std::to_string(y) + ")\n";
-			QString str = QString::fromUtf8(plain_s.c_str());
-			text.append(str);
-		}
+	for(auto it: this->annotations3D) {
+		int x = it.second.x(), y = it.second.y(), z = it.second.z();
+		std::string plain_s = "Point " + it.first + ": (" + std::to_string(x) + ", " + std::to_string(y) + ", " + std::to_string(z) + ")\n";
+		QString str = QString::fromUtf8(plain_s.c_str());
+		text.append(str);
 	}
+
+	text.append(QString::fromStdString("Distance 1 ( b1 - b2 ): " + std::to_string(this->distance1) + " cm\n"));
+	text.append(QString::fromStdString("Distance 2 ( c1 - c2 ): " + std::to_string(this->distance2) + " cm\n"));
+	text.append(QString::fromStdString("Alpha: " + std::to_string(this->angle1) + " degree\n"));
+	text.append(QString::fromStdString("Beta: " + std::to_string(this->angle2) + " degree\n"));
 
 	this->parent->ui.annotationsText->setText(text);
 }
@@ -178,4 +200,32 @@ DragAndDropGraphicsScene* AnnotateTab::getColorScene() {
 
 DragAndDropGraphicsScene* AnnotateTab::getDepthToColorScene() {
 	return this->depthToColorScene;
+}
+
+int* AnnotateTab::getScalingFactor() {
+	return &this->scalingFactor;
+}
+
+std::map<std::string, QVector3D>* AnnotateTab::getAnnotations3D() {
+	return &this->annotations3D;
+}
+
+QVector3D AnnotateTab::query3DPoint(int x, int y) {
+	return this->parent->captureTab->query3DPoint(x, y);
+}
+
+void AnnotateTab::computeMetrics() {
+	const float PI = 3.14159265;
+	this->distance1 = this->annotations3D["b1"].distanceToPoint(this->annotations3D["b2"])/10;
+	this->distance2 = this->annotations3D["c1"].distanceToPoint(this->annotations3D["c2"])/10;
+	
+	//Angle between b1-b2 line and xy-plane
+	float zDiff = this->annotations3D["b1"].z() - this->annotations3D["b2"].z();
+	float xyDistance = std::sqrt(std::pow(this->annotations3D["b1"].x() - this->annotations3D["b2"].x(), 2) + std::pow(this->annotations3D["b1"].x() - this->annotations3D["b2"].x(), 2));
+	this->angle1 = std::atan(zDiff/xyDistance) * 180 / PI;
+
+	//Angle between c1-c2 line and xy-plane
+	zDiff = this->annotations3D["c1"].z() - this->annotations3D["c2"].z();
+	xyDistance = std::sqrt(std::pow(this->annotations3D["c1"].x() - this->annotations3D["c2"].x(), 2) + std::pow(this->annotations3D["c1"].x() - this->annotations3D["c2"].x(), 2));
+	this->angle2 = std::atan(zDiff/xyDistance) * 180 / PI;
 }

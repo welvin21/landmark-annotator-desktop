@@ -48,6 +48,8 @@ public:
     QImage getQIRImage();
     QImage getQDepthToColorImage();
     QImage getQColorToDepthImage();
+    k4a_result_t copyk4aImage(k4a_image_t* src, k4a_image_t* target);
+    k4a_result_t alignk4APointCloud(k4a_image_t* k4aDepthImage, k4a_image_t* target);
 };
 
 #endif

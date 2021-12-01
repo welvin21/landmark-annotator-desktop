@@ -18,9 +18,21 @@ DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab, Im
 		if(!it.second.isNull()) painter.drawText(it.second.x(), it.second.y(), QString::fromStdString(it.first));
 	}
 
+	painter.setPen(QPen(Qt::white , 0.5, Qt::DashLine, Qt::RoundCap));
+	painter.drawLine(
+		(*this->annotateTab->getAnnotations())["b1"].x(), (*this->annotateTab->getAnnotations())["b1"].y(),
+		(*this->annotateTab->getAnnotations())["b2"].x(), (*this->annotateTab->getAnnotations())["b2"].y()
+	);
+
+	painter.drawLine(
+		(*this->annotateTab->getAnnotations())["c1"].x(), (*this->annotateTab->getAnnotations())["c1"].y(),
+		(*this->annotateTab->getAnnotations())["c2"].x(), (*this->annotateTab->getAnnotations())["c2"].y()
+	);
+
 	painter.end();
 
 	this->addPixmap(QPixmap::fromImage(this->imageType == Color ? *this->annotateTab->getAnnotatedColorImage() : *this->annotateTab->getAnnotatedDepthToColorImage()));
+	this->annotateTab->computeMetrics();
 	this->annotateTab->setAnnotationsText();
 }
 
@@ -59,6 +71,14 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 		(*this->annotateTab->getAnnotations())[this->pointKey].setX(x);
 		(*this->annotateTab->getAnnotations())[this->pointKey].setY(y);
 
+		x *= *this->annotateTab->getScalingFactor();
+		y *= *this->annotateTab->getScalingFactor();
+		QVector3D vector3D = this->annotateTab->query3DPoint(x, y);
+
+		(*this->annotateTab->getAnnotations3D())[this->pointKey].setX(vector3D.x());
+		(*this->annotateTab->getAnnotations3D())[this->pointKey].setY(vector3D.y());
+		(*this->annotateTab->getAnnotations3D())[this->pointKey].setZ(vector3D.z());
+
 		QPainter painter(this->annotateTab->getAnnotatedColorImage());
 		QPainter painter2(this->annotateTab->getAnnotatedDepthToColorImage());
 
@@ -76,6 +96,27 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 			painter2.drawText(it.second.x(), it.second.y(), QString::fromStdString(it.first));
 		}
 
+		painter.setPen(QPen(Qt::white , 0.5, Qt::DashLine, Qt::RoundCap));
+		painter2.setPen(QPen(Qt::white , 0.5, Qt::DashLine, Qt::RoundCap));
+		painter.drawLine(
+			(*this->annotateTab->getAnnotations())["b1"].x(), (*this->annotateTab->getAnnotations())["b1"].y(),
+			(*this->annotateTab->getAnnotations())["b2"].x(), (*this->annotateTab->getAnnotations())["b2"].y()
+		);
+		painter2.drawLine(
+			(*this->annotateTab->getAnnotations())["b1"].x(), (*this->annotateTab->getAnnotations())["b1"].y(),
+			(*this->annotateTab->getAnnotations())["b2"].x(), (*this->annotateTab->getAnnotations())["b2"].y()
+		);
+
+		painter.drawLine(
+			(*this->annotateTab->getAnnotations())["c1"].x(), (*this->annotateTab->getAnnotations())["c1"].y(),
+			(*this->annotateTab->getAnnotations())["c2"].x(), (*this->annotateTab->getAnnotations())["c2"].y()
+		);
+		painter2.drawLine(
+			(*this->annotateTab->getAnnotations())["c1"].x(), (*this->annotateTab->getAnnotations())["c1"].y(),
+			(*this->annotateTab->getAnnotations())["c2"].x(), (*this->annotateTab->getAnnotations())["c2"].y()
+		);
+
+
 		painter.end();
 		painter2.end();
 		
@@ -88,7 +129,8 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 			this->annotateTab->getColorScene()->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedColorImage()));
 			this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedDepthToColorImage()));
 		}
-			
+
+		this->annotateTab->computeMetrics();
 		this->annotateTab->setAnnotationsText();
 	}
 	
