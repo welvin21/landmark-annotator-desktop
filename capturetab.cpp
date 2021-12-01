@@ -290,16 +290,51 @@ k4a_image_t* CaptureTab::getK4aDepthToColor() {
 }
 
 QVector3D CaptureTab::query3DPoint(int x, int y) {
-    int16_t xOut, yOut, zOut;
-
     int width = k4a_image_get_width_pixels(*this->getK4aPointCloud());
     int height = k4a_image_get_height_pixels(*this->getK4aPointCloud());
-    int index = 3 * ((width * y) + x);
-    qDebug() << index;
 
-    xOut = (int16_t) k4a_image_get_buffer(*this->getK4aPointCloud())[index];
-    yOut = (int16_t) k4a_image_get_buffer(*this->getK4aPointCloud())[++index];
-    zOut = (int16_t) k4a_image_get_buffer(*this->getK4aPointCloud())[++index];
+    bool* visited = (bool*) malloc((width * height) * sizeof(bool));
+    std::queue<std::pair<int, int>> coordQueue;
 
-    return QVector3D(xOut, yOut, zOut);
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) 
+            visited[(width * i) + j] = false;
+    }
+
+    visited[(width * y) + x] = true;
+    coordQueue.push(std::make_pair(x, y));
+    int index;
+    int16_t xOut, yOut, zOut;
+
+
+    while (!coordQueue.empty()) {
+        std::pair<int, int> coord = coordQueue.front();
+        coordQueue.pop();
+
+        index = 3 * ((width * coord.second) + coord.first);
+
+        xOut = (int16_t) k4a_image_get_buffer(*this->getK4aPointCloud())[index];
+        yOut = (int16_t) k4a_image_get_buffer(*this->getK4aPointCloud())[++index];
+        zOut = (int16_t) k4a_image_get_buffer(*this->getK4aPointCloud())[++index];
+
+        if (!(xOut == 0 && yOut == 0 && zOut == 0)) {
+            free(visited);
+            return QVector3D(xOut, yOut, zOut);
+        }
+
+        for (int i = coord.second - 1; i <= coord.second + 1; ++i) {
+            for (int j = coord.first - 1; j <= coord.first + 1; ++j) {
+                if (i < 0 || i >= height) continue;
+                if (j < 0 || j >= width) continue;
+
+                if (!visited[(width * i) + j]) {
+                    coordQueue.push(std::make_pair(j, i));
+                    visited[(width * i) + j] = true;
+                }
+            }
+        }
+    }
+
+    free(visited);
+    return QVector3D(0, 0, 0);
 }
