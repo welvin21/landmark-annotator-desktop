@@ -28,6 +28,9 @@ public:
     void recopyAnnotatedImage();
     DragAndDropGraphicsScene* getColorScene();
     DragAndDropGraphicsScene* getDepthToColorScene();
+    int* getScalingFactor();
+    std::map<std::string, QVector3D>* getAnnotations3D();
+    QVector3D query3DPoint(int x, int y);
 
 private:
     QImage colorImage;
@@ -35,9 +38,11 @@ private:
     QImage depthToColorImage;
     QImage annotatedDepthToColorImage;
     std::map<std::string, QPointF> annotations;
+    std::map<std::string, QVector3D> annotations3D;
     DesktopApp* parent;
     DragAndDropGraphicsScene* colorScene;
     DragAndDropGraphicsScene* depthToColorScene;
+    int scalingFactor;
     void drawAnnotations();
     QJsonDocument getAnnotationsJson();
 };

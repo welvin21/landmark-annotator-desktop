@@ -186,14 +186,14 @@ QImage DesktopApp::getQDepthToColorImage() {
         QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
         qImage.bits();
 
-        // Copy alignmentImage of type k4a_image_t as a member variable of captureTab (this->captureTab->k4aDepthToColorImage)
-        if (this->copyk4aImage(&alignmentImage, this->captureTab->getK4aDepthToColorImage()) != K4A_RESULT_SUCCEEDED) {
-            qDebug() << "Failed to copy k4a image";
-        }
-
         // Get point cloud alignment and copy as a member variable of captureTab (this->captureTab->k4aPointCloud)
         if(this->alignk4APointCloud(&alignmentImage, this->captureTab->getK4aPointCloud()) != K4A_RESULT_SUCCEEDED) {
             qDebug() << "Failed to align point cloud";
+        }
+
+        // Get depth to color alignment image and copt as a member variable of captureTab (this->captureTab->k4aDepthToColor)
+        if (this->copyk4aImage(&alignmentImage, this->captureTab->getK4aDepthToColor()) != K4A_RESULT_SUCCEEDED) {
+            qDebug() << "Failed to copy depth to color alignment image";
         }
 
         k4a_transformation_destroy(transformationHandle);

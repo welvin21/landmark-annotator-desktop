@@ -281,10 +281,25 @@ void CaptureTab::drawAccelerometerData() {
     this->parent->ui.graphicsViewAccelerometer->setScene(scene);
 }
 
-k4a_image_t* CaptureTab::getK4aDepthToColorImage() {
-    return &(this->k4aDepthToColorImage);
-}
-
 k4a_image_t* CaptureTab::getK4aPointCloud() {
     return &(this->k4aPointCloud);
+}
+
+k4a_image_t* CaptureTab::getK4aDepthToColor() {
+    return &(this->k4aDepthToColor);
+}
+
+QVector3D CaptureTab::query3DPoint(int x, int y) {
+    int16_t xOut, yOut, zOut;
+
+    int width = k4a_image_get_width_pixels(*this->getK4aPointCloud());
+    int height = k4a_image_get_height_pixels(*this->getK4aPointCloud());
+    int index = 3 * ((width * y) + x);
+    qDebug() << index;
+
+    xOut = (int16_t) k4a_image_get_buffer(*this->getK4aPointCloud())[index];
+    yOut = (int16_t) k4a_image_get_buffer(*this->getK4aPointCloud())[++index];
+    zOut = (int16_t) k4a_image_get_buffer(*this->getK4aPointCloud())[++index];
+
+    return QVector3D(xOut, yOut, zOut);
 }
