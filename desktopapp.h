@@ -12,8 +12,9 @@
 #include "patient.h"
 
 // Forward declaration to break circular dependency
-// Since DesktopApp have member variables of type <View | Capture | Annotate>Tab
+// Since DesktopApp have member variables of type <PatientData | View | Capture | Annotate>Tab
 // And each tab classes has member variable of type DesktopApp
+class PatientDataTab;
 class ViewTab;
 class CaptureTab;
 class AnnotateTab;
@@ -32,6 +33,7 @@ public:
     k4a_capture_t capture = NULL;
     k4a_imu_sample_t imuSample;
     
+    PatientDataTab* patientDataTab;
     ViewTab* viewTab;
     CaptureTab* captureTab;
     AnnotateTab* annotateTab;

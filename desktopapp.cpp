@@ -1,5 +1,6 @@
 #include "desktopapp.h"
 #include "stdafx.h"
+#include "patientdatatab.h"
 #include "viewtab.h"
 #include "capturetab.h"
 #include "annotatetab.h"
@@ -47,6 +48,7 @@ DesktopApp::DesktopApp(QWidget* parent)
         return;
     }
 
+    this->patientDataTab = new PatientDataTab(this);
     this->viewTab = new ViewTab(this);
     this->captureTab = new CaptureTab(this);
     this->annotateTab = new AnnotateTab(this);
@@ -58,21 +60,21 @@ DesktopApp::DesktopApp(QWidget* parent)
         switch (this->ui.tabWidget->currentIndex()) {
             case 1:
                 // current tab is viewTab
-                if(!patient.isValid())
+                if(!patient.getValidity())
                     this->ui.tabWidget->setCurrentIndex(0);
                 this->captureTab->timer->stop();
                 this->viewTab->timer->start(1000 / 30);
                 break;
             case 2:
                 // current tab is captureTab
-                if(!patient.isValid())
+                if(!patient.getValidity())
                     this->ui.tabWidget->setCurrentIndex(0);
                 this->viewTab->timer->stop();
                 this->captureTab->timer->start(1000 / 30);
                 break;
             case 3:
                 // current tab is annotateTab
-                if(!patient.isValid())
+                if(!patient.getValidity())
                     this->ui.tabWidget->setCurrentIndex(0);
                 this->viewTab->timer->stop();
                 this->captureTab->timer->stop();

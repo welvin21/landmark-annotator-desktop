@@ -14,6 +14,7 @@ private:
 	Sex sex;
 	float height;
 	float weight;
+	bool isValid;
 
 public:
 	// Setters
@@ -27,6 +28,7 @@ public:
 	void setSex(Sex);
 	void setHeight(float);
 	void setWeight(float);
+	void setValidity(bool);
 
 	// Getters 
 	std::string getName();
@@ -39,6 +41,5 @@ public:
 	Sex getSex();
 	float getHeight();
 	float getWeight();
-
-	bool isValid();
+	bool getValidity();
 };

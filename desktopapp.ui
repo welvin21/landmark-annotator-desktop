@@ -25,7 +25,7 @@
    <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="inputTab">
+   <widget class="QWidget" name="patientDataTab">
     <attribute name="title">
      <string>User data</string>
     </attribute>
@@ -304,6 +304,22 @@
       <string>Save</string>
      </property>
     </widget>
+    <widget class="QLabel" name="patientDataValidation">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>760</y>
+       <width>341</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
     <zorder>formTitle</zorder>
     <zorder>nameInput</zorder>
     <zorder>nameLabel</zorder>
@@ -326,6 +342,7 @@
     <zorder>weightLabel</zorder>
     <zorder>weightInput</zorder>
     <zorder>savePatientButton</zorder>
+    <zorder>patientDataValidation</zorder>
    </widget>
    <widget class="QWidget" name="viewTab">
     <attribute name="title">
