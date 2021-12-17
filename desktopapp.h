@@ -8,7 +8,8 @@
 #include <QtWidgets/QWidget>
 #include "ui_desktopapp.h"
 #include <k4a/k4a.hpp>
-#include <queue>
+#include "stdafx.h"
+#include "patient.h"
 
 // Forward declaration to break circular dependency
 // Since DesktopApp have member variables of type <View | Capture | Annotate>Tab
@@ -41,6 +42,8 @@ public:
     std::deque<k4a_float3_t> gyroSampleQueue;
     std::deque<k4a_float3_t> accSampleQueue;
     QImage currentCapturedImage;
+
+    Patient patient;
 
     void setTextOnGraphicsViews(char* text);
     QImage getQColorImage();
