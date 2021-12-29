@@ -12,7 +12,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     this->registerRadioButtonOnClicked(this->parent->ui.radioButton4, &this->depthToColorImage);
 
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), QString(), tr("Images (*.png)"));
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
         QImage image = this->parent->currentCapturedImage.scaled(width, height, Qt::KeepAspectRatio);
 

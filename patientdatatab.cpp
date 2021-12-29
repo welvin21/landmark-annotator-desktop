@@ -82,6 +82,8 @@ bool PatientDataTab::savePatientData() {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save patient data"), QString(), tr("Text (*.txt)"));
         
     if (!fileName.isEmpty()) {
+        this->parent->savePath = QFileInfo(fileName).dir();
+
         QFile file(fileName);
         file.open(QIODevice::WriteOnly | QIODevice::Text);
 

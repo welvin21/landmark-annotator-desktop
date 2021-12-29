@@ -46,6 +46,7 @@ public:
     QImage currentCapturedImage;
 
     Patient patient;
+    QDir savePath;
 
     void setTextOnGraphicsViews(char* text);
     QImage getQColorImage();
