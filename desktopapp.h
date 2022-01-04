@@ -8,11 +8,13 @@
 #include <QtWidgets/QWidget>
 #include "ui_desktopapp.h"
 #include <k4a/k4a.hpp>
-#include <queue>
+#include "stdafx.h"
+#include "patient.h"
 
 // Forward declaration to break circular dependency
-// Since DesktopApp have member variables of type <View | Capture | Annotate>Tab
+// Since DesktopApp have member variables of type <PatientData | View | Capture | Annotate>Tab
 // And each tab classes has member variable of type DesktopApp
+class PatientDataTab;
 class ViewTab;
 class CaptureTab;
 class AnnotateTab;
@@ -31,6 +33,7 @@ public:
     k4a_capture_t capture = NULL;
     k4a_imu_sample_t imuSample;
     
+    PatientDataTab* patientDataTab;
     ViewTab* viewTab;
     CaptureTab* captureTab;
     AnnotateTab* annotateTab;
@@ -40,7 +43,9 @@ public:
     std::queue<k4a_image_t> irImageQueue;
     std::deque<k4a_float3_t> gyroSampleQueue;
     std::deque<k4a_float3_t> accSampleQueue;
-    QImage currentCapturedImage;
+
+    Patient patient;
+    QDir savePath;
 
     void setTextOnGraphicsViews(char* text);
     QImage getQColorImage();

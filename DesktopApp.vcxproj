@@ -105,6 +105,8 @@
     <ClCompile Include="annotatetab.cpp" />
     <ClCompile Include="capturetab.cpp" />
     <ClCompile Include="draganddropgraphicsscene.cpp" />
+    <ClCompile Include="patient.cpp" />
+    <ClCompile Include="patientdatatab.cpp" />
     <ClCompile Include="viewtab.cpp" />
     <QtRcc Include="desktopapp.qrc" />
     <QtUic Include="desktopapp.ui" />
@@ -130,6 +132,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="draganddropgraphicsscene.h" />
+    <ClInclude Include="patient.h" />
+    <ClInclude Include="patientdatatab.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

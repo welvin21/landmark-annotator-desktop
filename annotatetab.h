@@ -10,7 +10,7 @@
 #include "draganddropgraphicsscene.h"
 #include "capturetab.h"
 
-enum ImageType {Color, DepthToColor};
+enum class ImageType {Color, DepthToColor};
 
 class AnnotateTab : public QWidget
 {

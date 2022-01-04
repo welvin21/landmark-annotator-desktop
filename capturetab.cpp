@@ -12,14 +12,12 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     this->registerRadioButtonOnClicked(this->parent->ui.radioButton4, &this->depthToColorImage);
 
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), QString(), tr("Images (*.png)"));
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Color Image"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        QImage image = this->parent->currentCapturedImage.scaled(width, height, Qt::KeepAspectRatio);
+        if (!fileName.isEmpty()) this->colorImage.save(fileName);
 
-        if (!fileName.isEmpty())
-        {
-            image.save(fileName);
-        }
+        fileName = QFileDialog::getSaveFileName(this, tr("Save RGBD Image"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
+        if (!fileName.isEmpty()) this->depthToColorImage.save(fileName);
     });
 
     QObject::connect(this->parent->ui.captureButton, &QPushButton::clicked, [this]() {
@@ -44,7 +42,6 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         }
 
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        this->parent->currentCapturedImage = image.copy();
 
         QImage imageScaled = image.scaled(width, height, Qt::KeepAspectRatio);
 
@@ -62,9 +59,9 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     });
 
     QObject::connect(this->parent->ui.annotateButtonCaptureTab, &QPushButton::clicked, [this]() {
-        // Move to annotate tab whose index is 2
+        // Move to annotate tab whose index is 3
         this->parent->annotateTab->reloadCurrentImage();
-        this->parent->ui.tabWidget->setCurrentIndex(2);
+        this->parent->ui.tabWidget->setCurrentIndex(3);
         this->parent->ui.annotateButtonAnnotateTab->click();
     });
 
@@ -177,7 +174,6 @@ void CaptureTab::setDefaultCaptureMode() {
 void CaptureTab::registerRadioButtonOnClicked(QRadioButton* radioButton, QImage* image) {
     QObject::connect(radioButton, &QRadioButton::clicked, [this, image]() {
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        this->parent->currentCapturedImage = (*image).copy();
 
         QImage imageScaled = (*image).scaled(width, height, Qt::KeepAspectRatio);
 

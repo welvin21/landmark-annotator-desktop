@@ -1,5 +1,6 @@
 #include "desktopapp.h"
 #include "stdafx.h"
+#include "patientdatatab.h"
 #include "viewtab.h"
 #include "capturetab.h"
 #include "annotatetab.h"
@@ -47,27 +48,40 @@ DesktopApp::DesktopApp(QWidget* parent)
         return;
     }
 
+    this->patientDataTab = new PatientDataTab(this);
     this->viewTab = new ViewTab(this);
     this->captureTab = new CaptureTab(this);
     this->annotateTab = new AnnotateTab(this);
 
-    if (this->ui.tabWidget->currentIndex() == 0) viewTab->timer->start(1000 / 30);
-    if (this->ui.tabWidget->currentIndex() == 1) captureTab->timer->start(1000 / 30);
+    if (this->ui.tabWidget->currentIndex() == 1) viewTab->timer->start(1000 / 30);
+    if (this->ui.tabWidget->currentIndex() == 2) captureTab->timer->start(1000 / 30);
 
     QObject::connect(ui.tabWidget, &QTabWidget::currentChanged, [this]() {
         switch (this->ui.tabWidget->currentIndex()) {
-            case 0:
+            case 1:
+                // current tab is viewTab
+                if(!patient.getValidity())
+                    this->ui.tabWidget->setCurrentIndex(0);
                 this->captureTab->timer->stop();
                 this->viewTab->timer->start(1000 / 30);
                 break;
-            case 1:
+            case 2:
+                // current tab is captureTab
+                if(!patient.getValidity())
+                    this->ui.tabWidget->setCurrentIndex(0);
                 this->viewTab->timer->stop();
                 this->captureTab->timer->start(1000 / 30);
                 break;
-            case 2:
+            case 3:
+                // current tab is annotateTab
+                if(!patient.getValidity())
+                    this->ui.tabWidget->setCurrentIndex(0);
                 this->viewTab->timer->stop();
                 this->captureTab->timer->stop();
+                break;
             default:
+                this->viewTab->timer->stop();
+                this->captureTab->timer->stop();
                 break;
         }
     });
