@@ -43,7 +43,6 @@ public:
     std::queue<k4a_image_t> irImageQueue;
     std::deque<k4a_float3_t> gyroSampleQueue;
     std::deque<k4a_float3_t> accSampleQueue;
-    QImage currentCapturedImage;
 
     Patient patient;
     QDir savePath;

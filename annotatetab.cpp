@@ -67,22 +67,22 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 	});
 
 	QObject::connect(this->parent->ui.saveButtonAnnotateTab, &QPushButton::clicked, [this]() {
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image File"), QString(), tr("Images (*.png)"));
-        int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
+		QString fileName = QFileDialog::getSaveFileName(this, tr("Save Annotated Color Image"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
+		int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
+		if (!fileName.isEmpty()) this->annotatedColorImage.save(fileName);
 
-        if (!fileName.isEmpty()) {
-            this->annotatedColorImage.save(fileName);
-			
-			QString jsonFileName = QFileDialog::getSaveFileName(this, tr("Save coordinates json file"), QString(), tr("JSON (*.json)"));
-			if (!jsonFileName.isEmpty()) {
-				QFile jsonFile(jsonFileName);
-				jsonFile.open(QFile::WriteOnly);
+		fileName = QFileDialog::getSaveFileName(this, tr("Save Annotated RGBD Image"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
+		if (!fileName.isEmpty()) this->annotatedDepthToColorImage.save(fileName);
 
-				QJsonDocument document = this->getAnnotationsJson();
+		fileName = QFileDialog::getSaveFileName(this, tr("Save coordinates json file"), this->parent->savePath.absolutePath(), tr("JSON (*.json)"));
+		if (!fileName.isEmpty()) {
+			QFile jsonFile(fileName);
+			jsonFile.open(QFile::WriteOnly);
 
-				jsonFile.write(document.toJson());
-			}
-        }
+			QJsonDocument document = this->getAnnotationsJson();
+
+			jsonFile.write(document.toJson());
+		}
 	});
 }
 
