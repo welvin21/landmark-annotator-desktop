@@ -79,10 +79,29 @@ PatientDataTab::PatientDataTab(DesktopApp* parent) {
 }
 
 bool PatientDataTab::savePatientData() {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save patient data"), QString(), tr("Text (*.txt)"));
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save patient data"), QString::fromStdString(this->parent->patient.getHKID()), tr("Text (*.txt)"));
 
     if (!fileName.isEmpty()) {
-        this->parent->savePath = QFileInfo(fileName).dir();
+        QDir savePath = QFileInfo(fileName).dir();
+
+        if (savePath.dirName().toStdString() == this->parent->patient.getHKID()) {
+            // If selected directory name is an HKID folder created prior
+            this->parent->savePath = savePath;
+        }
+        else {
+            // If HKID folder doesn't exist, create a new one first
+            if (!savePath.exists(QString::fromStdString(this->parent->patient.getHKID()))) {
+                savePath.mkdir(QString::fromStdString(this->parent->patient.getHKID()));
+            }
+
+            // Get into the HKID folder
+            savePath.cd(QString::fromStdString(this->parent->patient.getHKID()));
+
+            this->parent->savePath = savePath;
+        }
+
+        // The new filename is savePath + filename
+        fileName = this->parent->savePath.absolutePath() + "/" + QFileInfo(fileName).fileName();
 
         QFile file(fileName);
         file.open(QIODevice::WriteOnly | QIODevice::Text);
