@@ -6,7 +6,7 @@
 
 // Forward Declaration
 class AnnotateTab;
-enum ImageType;
+enum class ImageType;
 
 class DragAndDropGraphicsScene : public QGraphicsScene {
 public:

@@ -6,7 +6,7 @@ DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab, Im
 	this->imageType = imageType;
 
 	// Draw annotations if any
-	QPainter painter(this->imageType == Color ? this->annotateTab->getAnnotatedColorImage() : this->annotateTab->getAnnotatedDepthToColorImage());
+	QPainter painter(this->imageType == ImageType::Color ? this->annotateTab->getAnnotatedColorImage() : this->annotateTab->getAnnotatedDepthToColorImage());
 
 	painter.setPen(QPen(Qt::red, 8, Qt::SolidLine, Qt::RoundCap));
 	for(auto it: *this->annotateTab->getAnnotations()) {
@@ -31,7 +31,7 @@ DragAndDropGraphicsScene::DragAndDropGraphicsScene( AnnotateTab* annotateTab, Im
 
 	painter.end();
 
-	this->addPixmap(QPixmap::fromImage(this->imageType == Color ? *this->annotateTab->getAnnotatedColorImage() : *this->annotateTab->getAnnotatedDepthToColorImage()));
+	this->addPixmap(QPixmap::fromImage(this->imageType == ImageType::Color ? *this->annotateTab->getAnnotatedColorImage() : *this->annotateTab->getAnnotatedDepthToColorImage()));
 	this->annotateTab->computeMetrics();
 	this->annotateTab->setAnnotationsText();
 }
@@ -120,12 +120,12 @@ void DragAndDropGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* event) {
 		painter.end();
 		painter2.end();
 		
-		if (this->imageType == Color) {
+		if (this->imageType == ImageType::Color) {
 			this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedColorImage()));
 			this->annotateTab->getDepthToColorScene()->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedDepthToColorImage()));
 		}
 
-		if (this->imageType == DepthToColor) {
+		if (this->imageType == ImageType::DepthToColor) {
 			this->annotateTab->getColorScene()->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedColorImage()));
 			this->addPixmap(QPixmap::fromImage(*this->annotateTab->getAnnotatedDepthToColorImage()));
 		}

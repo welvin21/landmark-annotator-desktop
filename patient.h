@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-enum Sex {Male, Female};
+enum class Sex {Male, Female, Undefined};
 
 class Patient {
 private:
@@ -11,7 +11,7 @@ private:
 	std::string medicalNumber;
 	std::string nationality;
 	std::string address;
-	Sex sex;
+	Sex sex = Sex::Undefined;
 	float height;
 	float weight;
 	bool isValid;

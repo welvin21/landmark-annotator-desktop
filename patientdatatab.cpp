@@ -44,8 +44,8 @@ PatientDataTab::PatientDataTab(DesktopApp* parent) {
         }
         else isPatientDataValid = false;
 
-        if (this->parent->ui.male->isChecked()) this->parent->patient.setSex(Male);
-        else if (this->parent->ui.female->isChecked()) this->parent->patient.setSex(Female);
+        if (this->parent->ui.male->isChecked()) this->parent->patient.setSex(Sex::Male);
+        else if (this->parent->ui.female->isChecked()) this->parent->patient.setSex(Sex::Female);
         else isPatientDataValid = false;
 
         try {
@@ -80,7 +80,7 @@ PatientDataTab::PatientDataTab(DesktopApp* parent) {
 
 bool PatientDataTab::savePatientData() {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save patient data"), QString(), tr("Text (*.txt)"));
-        
+
     if (!fileName.isEmpty()) {
         this->parent->savePath = QFileInfo(fileName).dir();
 
@@ -96,7 +96,7 @@ bool PatientDataTab::savePatientData() {
         out << "Nationality: " << QString::fromStdString(this->parent->patient.getNationality()) << "\n";
         out << "Address: " << QString::fromStdString(this->parent->patient.getAddress()) << "\n";
 
-        std::string sex = this->parent->patient.getSex() == Male ? "Male" : "Female";
+        std::string sex = this->parent->patient.getSex() == Sex::Male ? "Male" : "Female";
         out << "Sex: " << QString::fromStdString(sex) << "\n";
 
         float height = this->parent->patient.getHeight();

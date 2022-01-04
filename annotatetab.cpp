@@ -20,8 +20,8 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 	width = this->parent->ui.graphicsViewAnnotation2->width();  height = this->parent->ui.graphicsViewAnnotation2->height();
 	this->annotatedDepthToColorImage = this->depthToColorImage.copy().scaled(width, height, Qt::KeepAspectRatio);
 
-	this->colorScene = new DragAndDropGraphicsScene(this, Color);
-	this->depthToColorScene = new DragAndDropGraphicsScene(this, DepthToColor);
+	this->colorScene = new DragAndDropGraphicsScene(this, ImageType::Color);
+	this->depthToColorScene = new DragAndDropGraphicsScene(this, ImageType::DepthToColor);
 
 	this->parent->ui.graphicsViewAnnotation->setScene(this->colorScene);
 	this->parent->ui.graphicsViewAnnotation->show();
@@ -103,8 +103,8 @@ void AnnotateTab::reloadCurrentImage() {
     if (this->colorScene) delete this->colorScene;
 	if (this->depthToColorScene) delete this->depthToColorScene;
 
-	this->colorScene = new DragAndDropGraphicsScene(this, Color);
-	this->depthToColorScene = new DragAndDropGraphicsScene(this, DepthToColor);
+	this->colorScene = new DragAndDropGraphicsScene(this, ImageType::Color);
+	this->depthToColorScene = new DragAndDropGraphicsScene(this, ImageType::DepthToColor);
 
 	this->parent->ui.graphicsViewAnnotation->setScene(this->colorScene);
 	this->parent->ui.graphicsViewAnnotation->show();
@@ -122,8 +122,8 @@ void AnnotateTab::drawAnnotations() {
     if (this->colorScene) delete this->colorScene;
     if (this->depthToColorScene) delete this->depthToColorScene;
 	
-	this->colorScene = new DragAndDropGraphicsScene(this, Color);
-	this->depthToColorScene = new DragAndDropGraphicsScene(this, DepthToColor);
+	this->colorScene = new DragAndDropGraphicsScene(this, ImageType::Color);
+	this->depthToColorScene = new DragAndDropGraphicsScene(this, ImageType::DepthToColor);
 	
 	this->parent->ui.graphicsViewAnnotation->setScene(this->colorScene);
     this->parent->ui.graphicsViewAnnotation->show();
