@@ -76,6 +76,39 @@ PatientDataTab::PatientDataTab(DesktopApp* parent) {
 
         this->parent->patient.setValidity(isPatientDataValid);
     });
+
+
+    QObject::connect(parent->ui.loadPatientButton, &QPushButton::clicked, [this]() {
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Load Patient Info"), QString(), tr("Text (*.txt)"));
+
+        QFile file(fileName);
+        file.open(QIODevice::ReadOnly);
+
+        QTextStream in(&file);
+
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            QStringList list = line.split(": ");
+
+            if (list.length() > 1) {
+                QString key = list[0], value = list[1];
+
+                if (key == "Full name") this->parent->ui.nameInput->setText(value);
+                else if (key == "HKID") this->parent->ui.idInput->setText(value);
+                else if (key == "Phone number") this->parent->ui.phoneInput->setText(value);
+                else if (key == "Email") this->parent->ui.emailInput->setText(value);
+                else if (key == "Medical number") this->parent->ui.medicalInput->setText(value);
+                else if (key == "Nationality") this->parent->ui.nationalityInput->setText(value);
+                else if (key == "Address") this->parent->ui.addressInput->setText(value);
+                else if (key == "Height") this->parent->ui.heightInput->setText(value);
+                else if (key == "Weight") this->parent->ui.weightInput->setText(value);
+                else if (key == "Sex") {
+                    if (value == "Male") this->parent->ui.male->setChecked(true);
+                    else if (value == "Female") this->parent->ui.female->setChecked(true);
+                } 
+            }
+        }
+    });
 }
 
 bool PatientDataTab::savePatientData() {
@@ -119,10 +152,10 @@ bool PatientDataTab::savePatientData() {
         out << "Sex: " << QString::fromStdString(sex) << "\n";
 
         float height = this->parent->patient.getHeight();
-        out << "Height: " << QString::fromStdString(std::to_string(height)) << " cm\n";
+        out << "Height: " << QString::fromStdString(std::to_string(height)) << "\n";
 
         float weight = this->parent->patient.getWeight();
-        out << "Weight: " << QString::fromStdString(std::to_string(weight)) << " kg\n";
+        out << "Weight: " << QString::fromStdString(std::to_string(weight)) << "\n";
 
         file.close();
 

@@ -294,7 +294,7 @@
     <widget class="QPushButton" name="savePatientButton">
      <property name="geometry">
       <rect>
-       <x>600</x>
+       <x>560</x>
        <y>710</y>
        <width>75</width>
        <height>23</height>
@@ -320,6 +320,19 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
+    <widget class="QPushButton" name="loadPatientButton">
+     <property name="geometry">
+      <rect>
+       <x>660</x>
+       <y>710</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Load</string>
+     </property>
+    </widget>
     <zorder>formTitle</zorder>
     <zorder>nameInput</zorder>
     <zorder>nameLabel</zorder>
@@ -343,6 +356,7 @@
     <zorder>weightInput</zorder>
     <zorder>savePatientButton</zorder>
     <zorder>patientDataValidation</zorder>
+    <zorder>loadPatientButton</zorder>
    </widget>
    <widget class="QWidget" name="viewTab">
     <attribute name="title">
