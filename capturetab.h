@@ -20,6 +20,8 @@ public:
     k4a_image_t* getK4aPointCloud();
     k4a_image_t* getK4aDepthToColor();
     QVector3D query3DPoint(int x, int y);
+    int getCaptureCount();
+    void setCaptureCount(int newCaptureCount);
 
 private:
     DesktopApp* parent;
@@ -29,6 +31,7 @@ private:
     QImage depthImage;
     QImage colorToDepthImage;
     QImage depthToColorImage;
+    int captureCount;
     void setDefaultCaptureMode();
     void registerRadioButtonOnClicked(QRadioButton* radioButton, QImage* image);
     void drawGyroscopeData();

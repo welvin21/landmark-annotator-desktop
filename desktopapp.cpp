@@ -135,7 +135,6 @@ QImage DesktopApp::getQDepthImage() {
     qImage.bits();
 
     return qImage;
-
 }
 
 QImage DesktopApp::getQIRImage() {
@@ -310,6 +309,12 @@ k4a_result_t DesktopApp::copyk4aImage(k4a_image_t* src, k4a_image_t* target) {
 }
 
 k4a_result_t DesktopApp::alignk4APointCloud(k4a_image_t* k4aDepthImage, k4a_image_t* target) {
+    if (this->captureTab->getCaptureCount() > 0) {
+        k4a_image_release(*target);
+    }
+
+    this->captureTab->setCaptureCount(this->captureTab->getCaptureCount() + 1);
+
     if (k4a_image_create(
             K4A_IMAGE_FORMAT_CUSTOM,
             k4a_image_get_width_pixels(*k4aDepthImage),

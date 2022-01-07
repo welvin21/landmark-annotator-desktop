@@ -11,6 +11,8 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     this->registerRadioButtonOnClicked(this->parent->ui.radioButton3, &this->colorToDepthImage);
     this->registerRadioButtonOnClicked(this->parent->ui.radioButton4, &this->depthToColorImage);
 
+    this->captureCount = 0;
+
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save Color Image"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
         int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
@@ -334,3 +336,7 @@ QVector3D CaptureTab::query3DPoint(int x, int y) {
     free(visited);
     return QVector3D(0, 0, 0);
 }
+
+int CaptureTab::getCaptureCount() { return this->captureCount; }
+
+void CaptureTab::setCaptureCount(int newCaptureCount) { this->captureCount = newCaptureCount; }
