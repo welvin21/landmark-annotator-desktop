@@ -47,7 +47,7 @@ public:
     Patient patient;
     QDir savePath;
 
-    void setTextOnGraphicsViews(char* text);
+    void setTextOnGraphicsViews(std::string text);
     QImage getQColorImage();
     QImage getQDepthImage();
     QImage getQIRImage();

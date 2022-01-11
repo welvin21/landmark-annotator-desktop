@@ -88,9 +88,9 @@ DesktopApp::DesktopApp(QWidget* parent)
 
 }
 
-void DesktopApp::setTextOnGraphicsViews(char* text) {
+void DesktopApp::setTextOnGraphicsViews(std::string text) {
     QGraphicsTextItem* graphicsText = new QGraphicsTextItem;
-    graphicsText->setPlainText(text);
+    graphicsText->setPlainText(QString::fromStdString(text));
     
     QGraphicsScene* scene = new QGraphicsScene;
     scene->addItem(graphicsText);
