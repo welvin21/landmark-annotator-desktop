@@ -67,22 +67,34 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 	});
 
 	QObject::connect(this->parent->ui.saveButtonAnnotateTab, &QPushButton::clicked, [this]() {
-		QString fileName = QFileDialog::getSaveFileName(this, tr("Save Annotated Color Image"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
-		int width = this->parent->ui.graphicsViewAnnotation->width(), height = this->parent->ui.graphicsViewAnnotation->height();
-		if (!fileName.isEmpty()) this->annotatedColorImage.save(fileName);
+		QString dateTimeString = Helper::getCurrentDateTimeString();
+		QString colorSavePath = this->parent->savePath.absolutePath() + "/landmarks_color_" + dateTimeString + ".png";
+		QString depthToColorSavePath = this->parent->savePath.absolutePath() + "/landmarks_rgbd_" + dateTimeString + ".png";
+		QString landmarksSavePath = this->parent->savePath.absolutePath() + "/landmarks_" + dateTimeString + ".json";
 
-		fileName = QFileDialog::getSaveFileName(this, tr("Save Annotated RGBD Image"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
-		if (!fileName.isEmpty()) this->annotatedDepthToColorImage.save(fileName);
-
-		fileName = QFileDialog::getSaveFileName(this, tr("Save coordinates json file"), this->parent->savePath.absolutePath(), tr("JSON (*.json)"));
-		if (!fileName.isEmpty()) {
-			QFile jsonFile(fileName);
-			jsonFile.open(QFile::WriteOnly);
-
-			QJsonDocument document = this->getAnnotationsJson();
-
-			jsonFile.write(document.toJson());
+		// Save color image
+		QImageWriter colorWriter(colorSavePath);
+		if (!colorWriter.write(this->annotatedColorImage)) {
+			qDebug() << colorWriter.errorString();
+			this->parent->ui.saveInfoAnnotateTab->setText("Something went wrong, cannot save images.");
+			return;
 		}
+
+		// Save RGBD image
+		QImageWriter depthToColorWriter(depthToColorSavePath);
+		if (!depthToColorWriter.write(this->annotatedDepthToColorImage)) {
+			qDebug() << depthToColorWriter.errorString();
+			this->parent->ui.saveInfoAnnotateTab->setText("Something went wrong, cannot save images.");
+			return;
+		}
+
+		// Save landmarks in json
+		QFile jsonFile(landmarksSavePath);
+		jsonFile.open(QFile::WriteOnly);
+		QJsonDocument document = this->getAnnotationsJson();
+		jsonFile.write(document.toJson());
+
+		this->parent->ui.saveInfoAnnotateTab->setText("Images saved as " + colorSavePath + " and " + depthToColorSavePath);
 	});
 }
 

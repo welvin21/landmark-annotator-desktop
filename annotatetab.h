@@ -4,6 +4,7 @@
 
 #include <QtWidgets/QWidget>
 #include "stdafx.h"
+#include "helper.h"
 #include "desktopapp.h"
 #include <k4a/k4a.hpp>
 #include <opencv2/opencv.hpp>

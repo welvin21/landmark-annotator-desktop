@@ -14,12 +14,27 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     this->captureCount = 0;
 
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Save Color Image"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
-        int width = this->parent->ui.graphicsViewImage->width(), height = this->parent->ui.graphicsViewImage->height();
-        if (!fileName.isEmpty()) this->colorImage.save(fileName);
+        QString dateTimeString = Helper::getCurrentDateTimeString();
+        QString colorSavePath = this->parent->savePath.absolutePath() + "/color_" + dateTimeString + ".png";
+        QString depthToColorSavePath = this->parent->savePath.absolutePath() + "/rgbd_" + dateTimeString + ".png";
 
-        fileName = QFileDialog::getSaveFileName(this, tr("Save RGBD Image"), this->parent->savePath.absolutePath(), tr("Images (*.png)"));
-        if (!fileName.isEmpty()) this->depthToColorImage.save(fileName);
+        // Save color image
+        QImageWriter colorWriter(colorSavePath);
+        if (!colorWriter.write(this->colorImage)) {
+            qDebug() << colorWriter.errorString();
+            this->parent->ui.saveInfoCaptureTab->setText("Something went wrong, cannot save images.");
+            return;
+        }
+
+        // Save RGBD image
+        QImageWriter depthToColorWriter(depthToColorSavePath);
+        if (!depthToColorWriter.write(this->depthToColorImage)) {
+            qDebug() << depthToColorWriter.errorString();
+            this->parent->ui.saveInfoCaptureTab->setText("Something went wrong, cannot save images.");
+            return;
+        }
+
+        this->parent->ui.saveInfoCaptureTab->setText("Images saved as " + colorSavePath + " and " + depthToColorSavePath);
     });
 
     QObject::connect(this->parent->ui.captureButton, &QPushButton::clicked, [this]() {
