@@ -18,6 +18,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         QString colorSavePath = this->parent->savePath.absolutePath() + "/color_" + dateTimeString + ".png";
         QString depthToColorSavePath = this->parent->savePath.absolutePath() + "/rgbd_" + dateTimeString + ".png";
 
+        // Save color image
         QImageWriter colorWriter(colorSavePath);
         if (!colorWriter.write(this->colorImage)) {
             qDebug() << colorWriter.errorString();
@@ -25,6 +26,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             return;
         }
 
+        // Save RGBD image
         QImageWriter depthToColorWriter(depthToColorSavePath);
         if (!depthToColorWriter.write(this->depthToColorImage)) {
             qDebug() << depthToColorWriter.errorString();
