@@ -6,6 +6,7 @@
 #include "helper.h"
 #include "annotatetab.h"
 #include "desktopapp.h"
+#include "recorder.h"
 #include <k4a/k4a.hpp>
 #include <opencv2/opencv.hpp>
 
@@ -33,6 +34,7 @@ private:
     QImage colorToDepthImage;
     QImage depthToColorImage;
     int captureCount;
+    Recorder* recorder;
     void setDefaultCaptureMode();
     void registerRadioButtonOnClicked(QRadioButton* radioButton, QImage* image);
     void drawGyroscopeData();

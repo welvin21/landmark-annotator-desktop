@@ -3,6 +3,7 @@
 CaptureTab::CaptureTab(DesktopApp* parent)
 {
     this->parent = parent;
+    this->recorder = new Recorder(parent);
 
     this->setDefaultCaptureMode();
 
@@ -35,6 +36,23 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         }
 
         this->parent->ui.saveInfoCaptureTab->setText("Images saved as " + colorSavePath + " and " + depthToColorSavePath);
+    });
+
+    QObject::connect(this->parent->ui.saveVideoButton, &QPushButton::clicked, [this]() {
+        if (this->recorder->getRecordingStatus()) {
+            this->recorder->setRecordingStatus(false);
+            this->parent->ui.saveVideoButton->setText("start recording");
+
+            this->recorder->timer->stop();
+
+            this->parent->ui.saveInfoCaptureTab->setText("Recording is saved as " + this->parent->savePath.absolutePath() + "/recording_" + Helper::getCurrentDateTimeString());
+        }
+        else {
+            this->recorder->setRecordingStatus(true);
+            this->parent->ui.saveVideoButton->setText("stop recording");
+
+            this->recorder->timer->start(1000);
+        }
     });
 
     QObject::connect(this->parent->ui.captureButton, &QPushButton::clicked, [this]() {
