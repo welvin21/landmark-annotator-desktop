@@ -4,7 +4,6 @@
 #include "viewtab.h"
 #include "capturetab.h"
 #include "annotatetab.h"
-#include <opencv2/opencv.hpp>
 
 DesktopApp::DesktopApp(QWidget* parent)
     : QWidget(parent)
@@ -53,8 +52,8 @@ DesktopApp::DesktopApp(QWidget* parent)
     this->captureTab = new CaptureTab(this);
     this->annotateTab = new AnnotateTab(this);
 
-    if (this->ui.tabWidget->currentIndex() == 1) viewTab->timer->start(1000 / 30);
-    if (this->ui.tabWidget->currentIndex() == 2) captureTab->timer->start(1000 / 30);
+    if (this->ui.tabWidget->currentIndex() == 1) viewTab->timer->start(1000 / KINECT_CAMERA_FPS);
+    if (this->ui.tabWidget->currentIndex() == 2) captureTab->timer->start(1000 / KINECT_CAMERA_FPS);
 
     QObject::connect(ui.tabWidget, &QTabWidget::currentChanged, [this]() {
         switch (this->ui.tabWidget->currentIndex()) {
@@ -63,14 +62,14 @@ DesktopApp::DesktopApp(QWidget* parent)
                 if(!patient.getValidity())
                     this->ui.tabWidget->setCurrentIndex(0);
                 this->captureTab->timer->stop();
-                this->viewTab->timer->start(1000 / 30);
+                this->viewTab->timer->start(1000 / KINECT_CAMERA_FPS);
                 break;
             case 2:
                 // current tab is captureTab
                 if(!patient.getValidity())
                     this->ui.tabWidget->setCurrentIndex(0);
                 this->viewTab->timer->stop();
-                this->captureTab->timer->start(1000 / 30);
+                this->captureTab->timer->start(1000 / KINECT_CAMERA_FPS);
                 break;
             case 3:
                 // current tab is annotateTab
@@ -111,6 +110,11 @@ QImage DesktopApp::getQColorImage() {
     cv::Mat temp;
 
     cvtColor(matColorImage, temp, cv::COLOR_BGR2RGB);
+
+    //If recording mode is on, send temp to the output file stream
+    if (this->captureTab->getRecorder()->getRecordingStatus()) {
+        *(this->captureTab->getRecorder()->getVideoWriter()) << matColorImage;
+    }
 
     QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
     qImage.bits();

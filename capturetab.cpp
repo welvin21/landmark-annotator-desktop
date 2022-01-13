@@ -3,6 +3,7 @@
 CaptureTab::CaptureTab(DesktopApp* parent)
 {
     this->parent = parent;
+    this->recorder = new Recorder(parent);
 
     this->setDefaultCaptureMode();
 
@@ -35,6 +36,28 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         }
 
         this->parent->ui.saveInfoCaptureTab->setText("Images saved as " + colorSavePath + " and " + depthToColorSavePath);
+    });
+
+    QObject::connect(this->parent->ui.saveVideoButton, &QPushButton::clicked, [this]() {
+        if (this->recorder->getRecordingStatus()) {
+            // Current status is recording
+            this->recorder->setRecordingStatus(false);
+            this->parent->ui.saveVideoButton->setText("start recording");
+
+            this->recorder->timer->stop();
+
+            this->recorder->getVideoWriter()->release();
+
+            this->parent->ui.saveInfoCaptureTab->setText("Recording is saved as " + this->recorder->getOutputFilename());
+        }
+        else {
+            // Current status is NOT recording
+            this->recorder->prepareRecorder();
+            this->recorder->setRecordingStatus(true);
+            this->parent->ui.saveVideoButton->setText("stop recording");
+
+            this->recorder->timer->start(1000);
+        }
     });
 
     QObject::connect(this->parent->ui.captureButton, &QPushButton::clicked, [this]() {
@@ -91,11 +114,6 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             }
 
             if (this->parent->capture) {
-                // For every k4a_image_t object under this block of code
-                // It should be released using the k4a_image_release() function for memory deallocation
-                // We should find a way to copy the corresponding object so that they can be stored
-                // as a member variable in this->parent object
-
                 k4a_image_t k4aColorImage = k4a_capture_get_color_image(this->parent->capture);
 
                 if (k4aColorImage != NULL) {
@@ -355,3 +373,5 @@ QVector3D CaptureTab::query3DPoint(int x, int y) {
 int CaptureTab::getCaptureCount() { return this->captureCount; }
 
 void CaptureTab::setCaptureCount(int newCaptureCount) { this->captureCount = newCaptureCount; }
+
+Recorder* CaptureTab::getRecorder() { return this->recorder;  }

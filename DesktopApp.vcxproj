@@ -108,6 +108,7 @@
     <ClCompile Include="helper.cpp" />
     <ClCompile Include="patient.cpp" />
     <ClCompile Include="patientdatatab.cpp" />
+    <ClCompile Include="recorder.cpp" />
     <ClCompile Include="viewtab.cpp" />
     <QtRcc Include="desktopapp.qrc" />
     <QtUic Include="desktopapp.ui" />
@@ -136,6 +137,7 @@
     <ClInclude Include="helper.h" />
     <ClInclude Include="patient.h" />
     <ClInclude Include="patientdatatab.h" />
+    <ClInclude Include="recorder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
