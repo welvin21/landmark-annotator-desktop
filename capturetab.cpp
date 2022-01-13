@@ -109,11 +109,6 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             }
 
             if (this->parent->capture) {
-                // For every k4a_image_t object under this block of code
-                // It should be released using the k4a_image_release() function for memory deallocation
-                // We should find a way to copy the corresponding object so that they can be stored
-                // as a member variable in this->parent object
-
                 k4a_image_t k4aColorImage = k4a_capture_get_color_image(this->parent->capture);
 
                 if (k4aColorImage != NULL) {
