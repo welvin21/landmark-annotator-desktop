@@ -24,6 +24,7 @@ public:
     QVector3D query3DPoint(int x, int y);
     int getCaptureCount();
     void setCaptureCount(int newCaptureCount);
+    Recorder* getRecorder();
 
 private:
     DesktopApp* parent;

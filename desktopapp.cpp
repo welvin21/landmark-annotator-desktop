@@ -4,7 +4,6 @@
 #include "viewtab.h"
 #include "capturetab.h"
 #include "annotatetab.h"
-#include <opencv2/opencv.hpp>
 
 DesktopApp::DesktopApp(QWidget* parent)
     : QWidget(parent)
@@ -111,6 +110,12 @@ QImage DesktopApp::getQColorImage() {
     cv::Mat temp;
 
     cvtColor(matColorImage, temp, cv::COLOR_BGR2RGB);
+
+    //If recording mode is on, send temp to the output file stream
+    if (this->captureTab->getRecorder()->getRecordingStatus()) {
+        *(this->captureTab->getRecorder()->getVideoWriter()) << matColorImage;
+    }
+
     QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
     qImage.bits();
 

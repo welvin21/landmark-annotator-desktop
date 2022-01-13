@@ -40,14 +40,19 @@ CaptureTab::CaptureTab(DesktopApp* parent)
 
     QObject::connect(this->parent->ui.saveVideoButton, &QPushButton::clicked, [this]() {
         if (this->recorder->getRecordingStatus()) {
+            // Current status is recording
             this->recorder->setRecordingStatus(false);
             this->parent->ui.saveVideoButton->setText("start recording");
 
             this->recorder->timer->stop();
 
-            this->parent->ui.saveInfoCaptureTab->setText("Recording is saved as " + this->parent->savePath.absolutePath() + "/recording_" + Helper::getCurrentDateTimeString());
+            this->recorder->getVideoWriter()->release();
+
+            this->parent->ui.saveInfoCaptureTab->setText("Recording is saved as " + this->recorder->getOutputFilename());
         }
         else {
+            // Current status is NOT recording
+            this->recorder->prepareRecorder();
             this->recorder->setRecordingStatus(true);
             this->parent->ui.saveVideoButton->setText("stop recording");
 
@@ -368,3 +373,5 @@ QVector3D CaptureTab::query3DPoint(int x, int y) {
 int CaptureTab::getCaptureCount() { return this->captureCount; }
 
 void CaptureTab::setCaptureCount(int newCaptureCount) { this->captureCount = newCaptureCount; }
+
+Recorder* CaptureTab::getRecorder() { return this->recorder;  }
