@@ -17,8 +17,9 @@ CaptureTab::CaptureTab(DesktopApp* parent)
 
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
         QString dateTimeString = Helper::getCurrentDateTimeString();
-        QString colorSavePath = this->parent->savePath.absolutePath() + "/color_" + dateTimeString + ".png";
-        QString depthToColorSavePath = this->parent->savePath.absolutePath() + "/rgbd_" + dateTimeString + ".png";
+        QString visitFolderPath = Helper::getVisitFolderPath(this->parent->savePath);
+        QString colorSavePath = visitFolderPath + "/color_" + dateTimeString + ".png";
+        QString depthToColorSavePath = visitFolderPath + "/rgbd_" + dateTimeString + ".png";
 
         // Save color image
         QImageWriter colorWriter(colorSavePath);

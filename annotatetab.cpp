@@ -68,9 +68,10 @@ AnnotateTab::AnnotateTab(DesktopApp* parent) {
 
 	QObject::connect(this->parent->ui.saveButtonAnnotateTab, &QPushButton::clicked, [this]() {
 		QString dateTimeString = Helper::getCurrentDateTimeString();
-		QString colorSavePath = this->parent->savePath.absolutePath() + "/landmarks_color_" + dateTimeString + ".png";
-		QString depthToColorSavePath = this->parent->savePath.absolutePath() + "/landmarks_rgbd_" + dateTimeString + ".png";
-		QString landmarksSavePath = this->parent->savePath.absolutePath() + "/landmarks_" + dateTimeString + ".json";
+		QString visitFolderPath = Helper::getVisitFolderPath(this->parent->savePath);
+		QString colorSavePath = visitFolderPath + "/landmarks_color_" + dateTimeString + ".png";
+		QString depthToColorSavePath = visitFolderPath + "/landmarks_rgbd_" + dateTimeString + ".png";
+		QString landmarksSavePath = visitFolderPath + "/landmarks_" + dateTimeString + ".json";
 
 		// Save color image
 		QImageWriter colorWriter(colorSavePath);

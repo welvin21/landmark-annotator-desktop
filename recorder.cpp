@@ -24,7 +24,8 @@ bool Recorder::getRecordingStatus() {
 void Recorder::prepareRecorder() {
 	// Initialize output filename
 	QString dateTimeString = Helper::getCurrentDateTimeString();
-	this->outputFilename = this->parent->savePath.absolutePath() + "/recording_" + dateTimeString + ".mp4";
+	QString visitFolderPath = Helper::getVisitFolderPath(this->parent->savePath);
+	this->outputFilename = visitFolderPath + "/recording_" + dateTimeString + ".mp4";
 
 	// Initialize opencv VideoWriter
 	cv::Size size(
