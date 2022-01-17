@@ -21,10 +21,6 @@ bool Recorder::getRecordingStatus() {
 	return this->isRecording;
 }
 
-void Recorder::setRecordingStatus(bool recordingStatus) {
-	this->isRecording = recordingStatus;
-}
-
 void Recorder::prepareRecorder() {
 	// Initialize output filename
 	QString dateTimeString = Helper::getCurrentDateTimeString();
@@ -42,6 +38,17 @@ void Recorder::prepareRecorder() {
 		VIDEOWRITER_FPS,
 		size
 	);
+
+	this->isRecording = true;
+}
+
+void Recorder::stopRecorder() {
+	this->isRecording = false;
+
+	this->timer->stop();
+	this->counter = 0;
+
+	this->videoWriter->release();
 }
 
 cv::VideoWriter* Recorder::getVideoWriter() { return this->videoWriter; }

@@ -22,8 +22,8 @@ public:
 	QTimer* timer;
 	Recorder(DesktopApp*);
 	bool getRecordingStatus();
-	void setRecordingStatus(bool);
 	void prepareRecorder();
+	void stopRecorder();
 	cv::VideoWriter* getVideoWriter();
 	QString getOutputFilename();
 };

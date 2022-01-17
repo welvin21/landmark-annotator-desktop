@@ -4,6 +4,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
 {
     this->parent = parent;
     this->recorder = new Recorder(parent);
+    this->parent->ui.recordingIndicatorText->setVisible(false);
 
     this->setDefaultCaptureMode();
 
@@ -41,19 +42,24 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     QObject::connect(this->parent->ui.saveVideoButton, &QPushButton::clicked, [this]() {
         if (this->recorder->getRecordingStatus()) {
             // Current status is recording
-            this->recorder->setRecordingStatus(false);
+
+            // Modify UI to disable recording status
+            this->parent->ui.recordingIndicatorText->setVisible(false);
+            this->parent->ui.captureTab->setStyleSheet("");
+
+            this->recorder->stopRecorder();
             this->parent->ui.saveVideoButton->setText("start recording");
-
-            this->recorder->timer->stop();
-
-            this->recorder->getVideoWriter()->release();
 
             this->parent->ui.saveInfoCaptureTab->setText("Recording is saved as " + this->recorder->getOutputFilename());
         }
         else {
             // Current status is NOT recording
+ 
+            // Modify UI to indicate recording status
+            this->parent->ui.recordingIndicatorText->setVisible(true);
+            this->parent->ui.captureTab->setStyleSheet("#captureTab {border: 2px solid red}");
+
             this->recorder->prepareRecorder();
-            this->recorder->setRecordingStatus(true);
             this->parent->ui.saveVideoButton->setText("stop recording");
 
             this->recorder->timer->start(1000);
