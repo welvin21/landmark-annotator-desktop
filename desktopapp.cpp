@@ -59,26 +59,34 @@ DesktopApp::DesktopApp(QWidget* parent)
         switch (this->ui.tabWidget->currentIndex()) {
             case 1:
                 // current tab is viewTab
-                if(!patient.getValidity())
+                if(!this->patient.getValidity()) //If patient data is not ready
                     this->ui.tabWidget->setCurrentIndex(0);
+
+                if (this->captureTab->getRecorder()->getRecordingStatus()) //If capture tab is recording
+                    this->ui.tabWidget->setCurrentIndex(2);
                 this->captureTab->timer->stop();
                 this->viewTab->timer->start(1000 / KINECT_CAMERA_FPS);
                 break;
             case 2:
                 // current tab is captureTab
-                if(!patient.getValidity())
+                if(!this->patient.getValidity()) //If patient data is not ready
                     this->ui.tabWidget->setCurrentIndex(0);
                 this->viewTab->timer->stop();
                 this->captureTab->timer->start(1000 / KINECT_CAMERA_FPS);
                 break;
             case 3:
                 // current tab is annotateTab
-                if(!patient.getValidity())
+                if(!this->patient.getValidity()) //If patient data is not ready
                     this->ui.tabWidget->setCurrentIndex(0);
+
+                if (this->captureTab->getRecorder()->getRecordingStatus()) //If capture tab is recording
+                    this->ui.tabWidget->setCurrentIndex(2);
                 this->viewTab->timer->stop();
                 this->captureTab->timer->stop();
                 break;
             default:
+                if (this->captureTab->getRecorder()->getRecordingStatus()) //If capture tab is recording
+                    this->ui.tabWidget->setCurrentIndex(2);
                 this->viewTab->timer->stop();
                 this->captureTab->timer->stop();
                 break;
