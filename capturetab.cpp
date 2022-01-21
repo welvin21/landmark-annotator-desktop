@@ -20,24 +20,29 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         QString visitFolderPath = Helper::getVisitFolderPath(this->parent->savePath);
         QString colorSavePath = visitFolderPath + "/color_" + dateTimeString + ".png";
         QString depthToColorSavePath = visitFolderPath + "/rgbd_" + dateTimeString + ".png";
+        QString depthSavePath = visitFolderPath + "/depth_" + dateTimeString + ".png";
+        QString colorToDepthSavePath = visitFolderPath + "/color_aligned_" + dateTimeString + ".png";
 
-        // Save color image
         QImageWriter colorWriter(colorSavePath);
-        if (!colorWriter.write(this->colorImage)) {
-            qDebug() << colorWriter.errorString();
-            this->parent->ui.saveInfoCaptureTab->setText("Something went wrong, cannot save images.");
-            return;
-        }
-
-        // Save RGBD image
         QImageWriter depthToColorWriter(depthToColorSavePath);
-        if (!depthToColorWriter.write(this->depthToColorImage)) {
+        QImageWriter depthWriter(depthSavePath);
+        QImageWriter colorToDepthWriter(colorToDepthSavePath);
+
+        if (
+            !colorWriter.write(this->colorImage) | 
+            !depthToColorWriter.write(this->depthToColorImage) | 
+            !depthWriter.write(this->depthImage) | 
+            !colorToDepthWriter.write(this->colorToDepthImage)
+            ) {
+            qDebug() << colorWriter.errorString();
+            qDebug() << depthToColorWriter.errorString();
+            qDebug() << depthWriter.errorString();
             qDebug() << depthToColorWriter.errorString();
             this->parent->ui.saveInfoCaptureTab->setText("Something went wrong, cannot save images.");
             return;
         }
 
-        this->parent->ui.saveInfoCaptureTab->setText("Images saved as " + colorSavePath + " and " + depthToColorSavePath);
+        this->parent->ui.saveInfoCaptureTab->setText("Images saved under " + visitFolderPath + "\n at " + dateTimeString);
     });
 
     QObject::connect(this->parent->ui.saveVideoButton, &QPushButton::clicked, [this]() {
