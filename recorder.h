@@ -5,6 +5,8 @@
 #define VIDEOWRITER_FPS 15
 #define COLOR_IMAGE_WIDTH 1280
 #define COLOR_IMAGE_HEIGHT 720 
+#define DEPTH_IMAGE_WIDTH 640
+#define DEPTH_IMAGE_HEIGHT 576
 
 #include "stdafx.h"
 #include "desktopapp.h"
@@ -15,17 +17,19 @@ private:
 	bool isRecording;
 	int counter;
 	DesktopApp* parent;
-	cv::VideoWriter* videoWriter;
-	QString outputFilename;
+	cv::VideoWriter* colorVideoWriter;
+	cv::VideoWriter* depthVideoWriter;
+	QString colorOutputFilename;
+	QString depthOutputFilename;
 
 public:
 	QTimer* timer;
 	Recorder(DesktopApp*);
 	bool getRecordingStatus();
-	void setRecordingStatus(bool);
 	void prepareRecorder();
-	cv::VideoWriter* getVideoWriter();
-	QString getOutputFilename();
+	void stopRecorder();
+	cv::VideoWriter* getColorVideoWriter();
+	cv::VideoWriter* getDepthVideoWriter();
 };
 
 #endif

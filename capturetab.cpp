@@ -4,6 +4,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
 {
     this->parent = parent;
     this->recorder = new Recorder(parent);
+    this->parent->ui.recordingIndicatorText->setVisible(false);
 
     this->setDefaultCaptureMode();
 
@@ -16,44 +17,57 @@ CaptureTab::CaptureTab(DesktopApp* parent)
 
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
         QString dateTimeString = Helper::getCurrentDateTimeString();
-        QString colorSavePath = this->parent->savePath.absolutePath() + "/color_" + dateTimeString + ".png";
-        QString depthToColorSavePath = this->parent->savePath.absolutePath() + "/rgbd_" + dateTimeString + ".png";
+        QString visitFolderPath = Helper::getVisitFolderPath(this->parent->savePath);
+        QString colorSavePath = visitFolderPath + "/color_" + dateTimeString + ".png";
+        QString depthToColorSavePath = visitFolderPath + "/rgbd_" + dateTimeString + ".png";
+        QString depthSavePath = visitFolderPath + "/depth_" + dateTimeString + ".png";
+        QString colorToDepthSavePath = visitFolderPath + "/color_aligned_" + dateTimeString + ".png";
 
-        // Save color image
         QImageWriter colorWriter(colorSavePath);
-        if (!colorWriter.write(this->colorImage)) {
-            qDebug() << colorWriter.errorString();
-            this->parent->ui.saveInfoCaptureTab->setText("Something went wrong, cannot save images.");
-            return;
-        }
-
-        // Save RGBD image
         QImageWriter depthToColorWriter(depthToColorSavePath);
-        if (!depthToColorWriter.write(this->depthToColorImage)) {
+        QImageWriter depthWriter(depthSavePath);
+        QImageWriter colorToDepthWriter(colorToDepthSavePath);
+
+        if (
+            !colorWriter.write(this->colorImage) | 
+            !depthToColorWriter.write(this->depthToColorImage) | 
+            !depthWriter.write(this->depthImage) | 
+            !colorToDepthWriter.write(this->colorToDepthImage)
+            ) {
+            qDebug() << colorWriter.errorString();
+            qDebug() << depthToColorWriter.errorString();
+            qDebug() << depthWriter.errorString();
             qDebug() << depthToColorWriter.errorString();
             this->parent->ui.saveInfoCaptureTab->setText("Something went wrong, cannot save images.");
             return;
         }
 
-        this->parent->ui.saveInfoCaptureTab->setText("Images saved as " + colorSavePath + " and " + depthToColorSavePath);
+        this->parent->ui.saveInfoCaptureTab->setText("Images saved under " + visitFolderPath + "\n at " + dateTimeString);
     });
 
     QObject::connect(this->parent->ui.saveVideoButton, &QPushButton::clicked, [this]() {
         if (this->recorder->getRecordingStatus()) {
             // Current status is recording
-            this->recorder->setRecordingStatus(false);
+            QString dateTimeString = Helper::getCurrentDateTimeString();
+            QString visitFolderPath = Helper::getVisitFolderPath(this->parent->savePath);
+
+            // Modify UI to disable recording status
+            this->parent->ui.recordingIndicatorText->setVisible(false);
+            this->parent->ui.captureTab->setStyleSheet("");
+
+            this->recorder->stopRecorder();
             this->parent->ui.saveVideoButton->setText("start recording");
 
-            this->recorder->timer->stop();
-
-            this->recorder->getVideoWriter()->release();
-
-            this->parent->ui.saveInfoCaptureTab->setText("Recording is saved as " + this->recorder->getOutputFilename());
+            this->parent->ui.saveInfoCaptureTab->setText("Recording is saved under " + visitFolderPath + "\nat " + dateTimeString);
         }
         else {
             // Current status is NOT recording
+ 
+            // Modify UI to indicate recording status
+            this->parent->ui.recordingIndicatorText->setVisible(true);
+            this->parent->ui.captureTab->setStyleSheet("#captureTab {border: 2px solid red}");
+
             this->recorder->prepareRecorder();
-            this->recorder->setRecordingStatus(true);
             this->parent->ui.saveVideoButton->setText("stop recording");
 
             this->recorder->timer->start(1000);
