@@ -121,7 +121,7 @@ QImage DesktopApp::getQColorImage() {
 
     //If recording mode is on, send temp to the output file stream
     if (this->captureTab->getRecorder()->getRecordingStatus()) {
-        *(this->captureTab->getRecorder()->getVideoWriter()) << matColorImage;
+        *(this->captureTab->getRecorder()->getColorVideoWriter()) << matColorImage;
     }
 
     QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
@@ -142,6 +142,11 @@ QImage DesktopApp::getQDepthImage() {
 
     cv::Mat temp;
     cvtColor(matDepthImage, temp, cv::COLOR_GRAY2RGB);
+
+    //If recording mode is on, send temp to the output file stream
+    if (this->captureTab->getRecorder()->getRecordingStatus()) {
+        *(this->captureTab->getRecorder()->getDepthVideoWriter()) << temp;
+    }
 
     QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
     qImage.bits();

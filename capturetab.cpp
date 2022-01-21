@@ -48,6 +48,8 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     QObject::connect(this->parent->ui.saveVideoButton, &QPushButton::clicked, [this]() {
         if (this->recorder->getRecordingStatus()) {
             // Current status is recording
+            QString dateTimeString = Helper::getCurrentDateTimeString();
+            QString visitFolderPath = Helper::getVisitFolderPath(this->parent->savePath);
 
             // Modify UI to disable recording status
             this->parent->ui.recordingIndicatorText->setVisible(false);
@@ -56,7 +58,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             this->recorder->stopRecorder();
             this->parent->ui.saveVideoButton->setText("start recording");
 
-            this->parent->ui.saveInfoCaptureTab->setText("Recording is saved as " + this->recorder->getOutputFilename());
+            this->parent->ui.saveInfoCaptureTab->setText("Recording is saved under " + visitFolderPath + "\nat " + dateTimeString);
         }
         else {
             // Current status is NOT recording
