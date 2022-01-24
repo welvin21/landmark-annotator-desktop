@@ -108,11 +108,16 @@ PatientDataTab::PatientDataTab(DesktopApp* parent) {
                 } 
             }
         }
+
+        file.close();
+
+        this->parent->savePath = QFileInfo(fileName).dir();
     });
 }
 
 bool PatientDataTab::savePatientData() {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save patient data"), QString::fromStdString(this->parent->patient.getHKID()), tr("Text (*.txt)"));
+    QString defaultSavePath = this->parent->savePath.absolutePath() + "/" + QString::fromStdString(this->parent->patient.getHKID());
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save patient data"), defaultSavePath, tr("Text (*.txt)"));
 
     if (!fileName.isEmpty()) {
         QDir savePath = QFileInfo(fileName).dir();
