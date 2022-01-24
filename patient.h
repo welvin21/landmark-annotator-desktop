@@ -14,6 +14,7 @@ private:
 	Sex sex = Sex::Undefined;
 	float height;
 	float weight;
+	QDate dob;
 	bool isValid;
 
 public:
@@ -28,6 +29,7 @@ public:
 	void setSex(Sex);
 	void setHeight(float);
 	void setWeight(float);
+	void setDOB(QDate);
 	void setValidity(bool);
 
 	// Getters 
@@ -41,5 +43,6 @@ public:
 	Sex getSex();
 	float getHeight();
 	float getWeight();
+	QDate getDOB();
 	bool getValidity();
 };

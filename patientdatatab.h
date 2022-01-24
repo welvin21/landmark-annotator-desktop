@@ -1,6 +1,8 @@
 #ifndef PATIENTDATATAB_H
 #define PATIENTDATATAB_H
 
+#define DATE_FORMAT "yyyyMMdd"
+
 #include "desktopapp.h"
 
 class PatientDataTab: public QWidget {

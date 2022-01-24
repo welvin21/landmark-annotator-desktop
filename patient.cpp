@@ -40,6 +40,10 @@ void Patient::setWeight(float weight) {
 	this->weight = weight;
 }
 
+void Patient::setDOB(QDate dob) {
+	this->dob = dob;
+}
+
 void Patient::setValidity(bool isValid) {
 	this->isValid = isValid;
 }
@@ -82,6 +86,10 @@ float Patient::getHeight() {
 
 float Patient::getWeight() {
 	return this->weight;
+}
+
+QDate Patient::getDOB() {
+	return this->dob;
 }
 
 bool Patient::getValidity() {

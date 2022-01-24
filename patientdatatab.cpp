@@ -4,6 +4,7 @@ PatientDataTab::PatientDataTab(DesktopApp* parent) {
     this->parent = parent;
 
     QObject::connect(parent->ui.savePatientButton, &QPushButton::clicked, [this]() {
+
         bool isPatientDataValid = true;
         
         std::string name, hkid, phone, email, medicalNumber, nationality, address;
@@ -57,6 +58,9 @@ PatientDataTab::PatientDataTab(DesktopApp* parent) {
             float parsedWeight = (float) std::stod(weight, nullptr);
             this->parent->patient.setHeight(parsedHeight);
             this->parent->patient.setWeight(parsedWeight);
+
+            // Parse date of birth (DOB)
+            this->parent->patient.setDOB(this->parent->ui.dobInput->selectedDate());
         }
         catch (std::exception& ia) {
             isPatientDataValid = false;
@@ -106,6 +110,10 @@ PatientDataTab::PatientDataTab(DesktopApp* parent) {
                     if (value == "Male") this->parent->ui.male->setChecked(true);
                     else if (value == "Female") this->parent->ui.female->setChecked(true);
                 } 
+                else if (key == "Date of birth") {
+                    qDebug() << value;
+                    this->parent->ui.dobInput->setSelectedDate(QDate::fromString(value, DATE_FORMAT));
+                }
             }
         }
 
@@ -149,6 +157,7 @@ bool PatientDataTab::savePatientData() {
         out << "HKID: " << QString::fromStdString(this->parent->patient.getHKID()) << "\n";
         out << "Phone number: " << QString::fromStdString(this->parent->patient.getPhoneNumber()) << "\n";
         out << "Email: " << QString::fromStdString(this->parent->patient.getEmail()) << "\n";
+        out << "Date of birth: " << this->parent->patient.getDOB().toString(DATE_FORMAT) << "\n";
         out << "Medical number: " << QString::fromStdString(this->parent->patient.getMedicalNumber()) << "\n";
         out << "Nationality: " << QString::fromStdString(this->parent->patient.getNationality()) << "\n";
         out << "Address: " << QString::fromStdString(this->parent->patient.getAddress()) << "\n";
