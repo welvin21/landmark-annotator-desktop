@@ -114,6 +114,23 @@ AlignmentTab::AlignmentTab(DesktopApp* parent) {
             cv::applyColorMap(matAlignmentImage, temp, cv::COLORMAP_RAINBOW);
 
             *(this->depthToColorVideoWriter) << temp;
+
+            // Release memory
+            colorTemp.release();
+            depthTemp.release();
+
+            color.reset();
+            depth.reset();
+
+            colorFrame.release();
+            depthFrame.release();
+
+            k4a_image_release(alignmentImage);
+            matAlignmentImageRaw.release();
+            matAlignmentImage.release();
+            temp.release();
+
+            k4a_transformation_destroy(transformationHandle);
         }
 
         // Reset everything
