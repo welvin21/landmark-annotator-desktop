@@ -102,6 +102,7 @@
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="alignmenttab.cpp" />
     <ClCompile Include="annotatetab.cpp" />
     <ClCompile Include="capturetab.cpp" />
     <ClCompile Include="draganddropgraphicsscene.cpp" />
@@ -133,6 +134,7 @@
     <QtMoc Include="annotatetab.h" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="alignmenttab.h" />
     <ClInclude Include="draganddropgraphicsscene.h" />
     <ClInclude Include="helper.h" />
     <ClInclude Include="patient.h" />

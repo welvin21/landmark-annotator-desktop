@@ -14,6 +14,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     this->registerRadioButtonOnClicked(this->parent->ui.radioButton4, &this->depthToColorImage);
 
     this->captureCount = 0;
+    this->timer = new QTimer;
 
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
         QString dateTimeString = Helper::getCurrentDateTimeString();
@@ -119,7 +120,6 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         this->parent->ui.annotateButtonAnnotateTab->click();
     });
 
-    this->timer = new QTimer;
     QObject::connect(timer, &QTimer::timeout, [this]() {
         if (this->parent->deviceCount > 0) {
             switch (k4a_device_get_capture(this->parent->device, &this->parent->capture, K4A_WAIT_INFINITE)) {
@@ -210,7 +210,6 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             if (this->parent->accSampleQueue.size() >= MAX_ACCELEROMETER_QUEUE_SIZE) this->drawAccelerometerData();
         }
     });
-
 }
 
 void CaptureTab::setDefaultCaptureMode() {

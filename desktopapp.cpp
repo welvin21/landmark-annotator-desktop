@@ -4,6 +4,7 @@
 #include "viewtab.h"
 #include "capturetab.h"
 #include "annotatetab.h"
+#include "alignmenttab.h"
 
 DesktopApp::DesktopApp(QWidget* parent)
     : QWidget(parent)
@@ -51,6 +52,7 @@ DesktopApp::DesktopApp(QWidget* parent)
     this->viewTab = new ViewTab(this);
     this->captureTab = new CaptureTab(this);
     this->annotateTab = new AnnotateTab(this);
+    this->alignmentTab = new AlignmentTab(this);
 
     if (this->ui.tabWidget->currentIndex() == 1) viewTab->timer->start(1000 / KINECT_CAMERA_FPS);
     if (this->ui.tabWidget->currentIndex() == 2) captureTab->timer->start(1000 / KINECT_CAMERA_FPS);
@@ -84,6 +86,15 @@ DesktopApp::DesktopApp(QWidget* parent)
                 this->viewTab->timer->stop();
                 this->captureTab->timer->stop();
                 break;
+            case 4:
+                // current tab is alignmentTab
+                if(!this->patient.getValidity()) //If patient data is not ready
+                    this->ui.tabWidget->setCurrentIndex(0);
+
+                if (this->captureTab->getRecorder()->getRecordingStatus()) //If capture tab is recording
+                    this->ui.tabWidget->setCurrentIndex(2);
+                this->viewTab->timer->stop();
+                this->captureTab->timer->stop();
             default:
                 if (this->captureTab->getRecorder()->getRecordingStatus()) //If capture tab is recording
                     this->ui.tabWidget->setCurrentIndex(2);
@@ -133,6 +144,7 @@ QImage DesktopApp::getQColorImage() {
 QImage DesktopApp::getQDepthImage() {
     k4a_image_t k4aDepthImage = this->depthImageQueue.back();
 
+    /*
     double min, max;
     cv::Mat matDepthImageRaw = cv::Mat(k4a_image_get_height_pixels(k4aDepthImage), k4a_image_get_width_pixels(k4aDepthImage), CV_16U, k4a_image_get_buffer(k4aDepthImage), cv::Mat::AUTO_STEP);
 
@@ -140,13 +152,25 @@ QImage DesktopApp::getQDepthImage() {
     cv::Mat matDepthImage;
     cv::convertScaleAbs(matDepthImageRaw, matDepthImage, 255 / max);
 
+    //If recording mode is on, send matDepthImage to the output file stream
+    if (this->captureTab->getRecorder()->getRecordingStatus()) {
+        *(this->captureTab->getRecorder()->getDepthVideoWriter()) << matDepthImage;
+    }
+    */
+    uint8_t* buffer = k4a_image_get_buffer(k4aDepthImage);
+    int rows = k4a_image_get_height_pixels(k4aDepthImage);
+    int cols = k4a_image_get_width_pixels(k4aDepthImage);
+
+    cv::Mat matDepthImage(rows, cols, CV_16U, (void*)buffer, cv::Mat::AUTO_STEP);
+
+    matDepthImage.convertTo(matDepthImage, CV_8U, 255.0 / 5000.0, 0.0);
+
+    if (this->captureTab->getRecorder()->getRecordingStatus()) {
+        *(this->captureTab->getRecorder()->getDepthVideoWriter()) << matDepthImage;
+    }
+
     cv::Mat temp;
     cvtColor(matDepthImage, temp, cv::COLOR_GRAY2RGB);
-
-    //If recording mode is on, send temp to the output file stream
-    if (this->captureTab->getRecorder()->getRecordingStatus()) {
-        *(this->captureTab->getRecorder()->getDepthVideoWriter()) << temp;
-    }
 
     QImage qImage((const uchar*)temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
     qImage.bits();
@@ -178,7 +202,7 @@ QImage DesktopApp::getQDepthToColorImage() {
 
     QImage qEmptyImage;
 
-    if (k4aDepthImage != NULL) {
+    if (k4aDepthImage != NULL && k4aColorImage != NULL) {
         k4a_calibration_t calibration;
         if (k4a_device_get_calibration(this->device, this->deviceConfig.depth_mode, this->deviceConfig.color_resolution, &calibration) != K4A_RESULT_SUCCEEDED) {
             return qEmptyImage;

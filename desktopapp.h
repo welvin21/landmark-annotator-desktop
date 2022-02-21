@@ -13,12 +13,13 @@
 #include "patient.h"
 
 // Forward declaration to break circular dependency
-// Since DesktopApp have member variables of type <PatientData | View | Capture | Annotate>Tab
+// Since DesktopApp have member variables of type <PatientData | View | Capture | Annotate | Alignment>Tab
 // And each tab classes has member variable of type DesktopApp
 class PatientDataTab;
 class ViewTab;
 class CaptureTab;
 class AnnotateTab;
+class AlignmentTab;
 
 class DesktopApp : public QWidget
 {
@@ -38,6 +39,7 @@ public:
     ViewTab* viewTab;
     CaptureTab* captureTab;
     AnnotateTab* annotateTab;
+    AlignmentTab* alignmentTab;
 
     std::queue<k4a_image_t> colorImageQueue;
     std::queue<k4a_image_t> depthImageQueue;
