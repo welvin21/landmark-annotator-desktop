@@ -1,3 +1,7 @@
+# landmark-annotator-desktop
+
+A landmark annotator desktop application written in C++, built on top of openCV APIs and Azure Kinect SDK for a radiation-free spine deformity prediction tool.
+
 # Example on how to link OpenCV4.5.2 and Qt5 to VS2019
 
 ## 1. Link OpenCV to Visual Studio 2019
