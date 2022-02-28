@@ -26,7 +26,7 @@
     <string notr="true">font: 8pt &quot;MS Shell Dlg 2&quot;;</string>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="patientDataTab">
     <attribute name="title">
@@ -616,6 +616,22 @@ color: rgb(255, 0, 5);
      </property>
      <property name="text">
       <string>Recording</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="showInExplorer">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>790</x>
+       <y>820</y>
+       <width>91</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Show In Explorer</string>
      </property>
     </widget>
    </widget>

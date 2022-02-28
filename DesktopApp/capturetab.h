@@ -25,6 +25,8 @@ public:
     int getCaptureCount();
     void setCaptureCount(int newCaptureCount);
     Recorder* getRecorder();
+    QString getCaptureFilepath();
+    void setCaptureFilepath(QString captureFilepath);
 
 private:
     DesktopApp* parent;
@@ -36,6 +38,7 @@ private:
     QImage depthToColorImage;
     int captureCount;
     Recorder* recorder;
+    QString captureFilepath;
     void setDefaultCaptureMode();
     void registerRadioButtonOnClicked(QRadioButton* radioButton, QImage* image);
     void drawGyroscopeData();

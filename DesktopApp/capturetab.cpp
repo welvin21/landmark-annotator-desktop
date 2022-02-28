@@ -16,6 +16,9 @@ CaptureTab::CaptureTab(DesktopApp* parent)
     this->captureCount = 0;
     this->timer = new QTimer;
 
+    this->parent->ui.showInExplorer->hide();
+    this->captureFilepath = QString();
+
     QObject::connect(this->parent->ui.saveButtonCaptureTab, &QPushButton::clicked, [this]() {
         QString dateTimeString = Helper::getCurrentDateTimeString();
         QString visitFolderPath = Helper::getVisitFolderPath(this->parent->savePath);
@@ -40,10 +43,15 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             qDebug() << depthWriter.errorString();
             qDebug() << depthToColorWriter.errorString();
             this->parent->ui.saveInfoCaptureTab->setText("Something went wrong, cannot save images.");
+
+            this->parent->ui.showInExplorer->hide();
             return;
         }
 
         this->parent->ui.saveInfoCaptureTab->setText("Images saved under " + visitFolderPath + "\n at " + dateTimeString);
+
+        this->parent->ui.showInExplorer->show();
+        this->setCaptureFilepath(visitFolderPath);
     });
 
     QObject::connect(this->parent->ui.saveVideoButton, &QPushButton::clicked, [this]() {
@@ -60,6 +68,9 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             this->parent->ui.saveVideoButton->setText("start recording");
 
             this->parent->ui.saveInfoCaptureTab->setText("Recording is saved under " + visitFolderPath + "\nat " + dateTimeString);
+
+            this->parent->ui.showInExplorer->show();
+            this->setCaptureFilepath(visitFolderPath);
         }
         else {
             // Current status is NOT recording
@@ -74,6 +85,21 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             this->recorder->timer->start(1000);
         }
     });
+
+    /** Michael Fong Show In Explorer
+    BEGIN */
+    QObject::connect(this->parent->ui.showInExplorer, &QPushButton::clicked, [this]() {
+        QString filepath = this->getCaptureFilepath();
+
+        QStringList args;
+
+        args << "/e," << QDir::toNativeSeparators(filepath);
+
+        QProcess* process = new QProcess(this);
+        process->startDetached("explorer.exe", args);
+    });
+    /** Michael Fong Show In Explorer
+    END */
 
     QObject::connect(this->parent->ui.captureButton, &QPushButton::clicked, [this]() {
         this->colorImage = this->parent->getQColorImage();
@@ -388,3 +414,6 @@ int CaptureTab::getCaptureCount() { return this->captureCount; }
 void CaptureTab::setCaptureCount(int newCaptureCount) { this->captureCount = newCaptureCount; }
 
 Recorder* CaptureTab::getRecorder() { return this->recorder;  }
+
+QString CaptureTab::getCaptureFilepath() { return this->captureFilepath; }
+void CaptureTab::setCaptureFilepath(QString captureFilepath) { this->captureFilepath = captureFilepath; }
