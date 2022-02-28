@@ -51,7 +51,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
         this->parent->ui.saveInfoCaptureTab->setText("Images saved under " + visitFolderPath + "\n at " + dateTimeString);
 
         this->parent->ui.showInExplorer->show();
-        this->setCaptureFilepath(visitFolderPath);
+        this->setCaptureFilepath(colorSavePath);
     });
 
     QObject::connect(this->parent->ui.saveVideoButton, &QPushButton::clicked, [this]() {
@@ -70,7 +70,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
             this->parent->ui.saveInfoCaptureTab->setText("Recording is saved under " + visitFolderPath + "\nat " + dateTimeString);
 
             this->parent->ui.showInExplorer->show();
-            this->setCaptureFilepath(visitFolderPath);
+            this->setCaptureFilepath(this->recorder->getColorOutputFilename());
         }
         else {
             // Current status is NOT recording
@@ -93,7 +93,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
 
         QStringList args;
 
-        args << "/e," << QDir::toNativeSeparators(filepath);
+        args << "/select," << QDir::toNativeSeparators(filepath);
 
         QProcess* process = new QProcess(this);
         process->startDetached("explorer.exe", args);

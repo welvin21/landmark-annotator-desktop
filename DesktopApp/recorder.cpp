@@ -69,3 +69,5 @@ void Recorder::stopRecorder() {
 cv::VideoWriter* Recorder::getColorVideoWriter() { return this->colorVideoWriter; }
 
 cv::VideoWriter* Recorder::getDepthVideoWriter() { return this->depthVideoWriter; }
+
+QString Recorder::getColorOutputFilename() { return this->colorOutputFilename; }

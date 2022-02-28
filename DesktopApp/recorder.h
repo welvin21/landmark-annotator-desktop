@@ -30,6 +30,7 @@ public:
 	void stopRecorder();
 	cv::VideoWriter* getColorVideoWriter();
 	cv::VideoWriter* getDepthVideoWriter();
+	QString getColorOutputFilename();
 };
 
 #endif
