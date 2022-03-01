@@ -4,3 +4,7 @@
 *.mp4
 
 /x64
+.vs/
+DesktopApp/x64/
+*.png
+*.vcxproj.user
