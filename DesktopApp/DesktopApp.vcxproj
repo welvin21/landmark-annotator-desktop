@@ -55,21 +55,21 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>c:\opencv\build\include;$(IncludePath)</IncludePath>
-    <LibraryPath>c:\opencv\build\x64\vc15\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\opencv-4.5.2\build\Debug\install\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\opencv-4.5.2\build\Debug\install\x64\vc16\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>D:\opencv-4.5.2\build\install\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\opencv-4.5.2\build\install\x64\vc16\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\opencv-4.5.2\build\Release\install\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\opencv-4.5.2\build\Release\install\x64\vc16\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>opencv_world453d.lib;$(Qt_LIBS_);"C:\Qt\Qt5.12.11\5.12.11\msvc2017_64\lib\Qt5Multimediad.lib";"C:\Qt\Qt5.12.11\5.12.11\msvc2017_64\lib\Qt5MultimediaWidgetsd.lib"</AdditionalDependencies>
+      <AdditionalDependencies>$(Qt_LIBS_);D:\opencv-4.5.2\build\Debug\install\x64\vc16\lib\*.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <AdditionalDependencies>D:\opencv-4.5.2\build\install\x64\vc16\lib\*.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>D:\opencv-4.5.2\build\Release\install\x64\vc16\lib\*.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
