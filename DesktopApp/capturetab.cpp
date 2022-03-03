@@ -159,7 +159,7 @@ CaptureTab::CaptureTab(DesktopApp* parent)
                 if (k4aColorImage != NULL) {
                     this->parent->colorImageQueue.push(k4aColorImage);
 
-                    int width = this->parent->ui.graphicsViewVideo->width(), height = this->parent->ui.graphicsViewVideo->height();
+                    int width = this->parent->ui.graphicsViewVideo4->width(), height = this->parent->ui.graphicsViewVideo4->height();
                     QImage qColorImage = (this->parent->getQColorImage()).scaled(width, height, Qt::KeepAspectRatio);
 
                     // Deallocate heap memory used by previous GGraphicsScene object

@@ -117,6 +117,7 @@ void DesktopApp::setTextOnGraphicsViews(std::string text) {
     ui.graphicsViewVideo2->setScene(scene);
     ui.graphicsViewVideo3->setScene(scene);
     ui.graphicsViewVideo4->setScene(scene);
+    ui.graphicsViewVideo5->setScene(scene);
     ui.graphicsViewImage->setScene(scene);
     ui.graphicsViewAnnotation->setScene(scene);
 }
